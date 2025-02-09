@@ -1,7 +1,7 @@
-// @import "../../style.scss";
+@import "../../style.scss";
 
 .navbar {
-//   @include themify($themes) {
+  @include themify($themes) {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -10,8 +10,8 @@
     border-bottom: 1px solid rgb(199, 194, 194);
     position: sticky;
     top: 0;
-    // background-color: themed("bg");
-    // color:themed("textColor");
+    background-color: themed("bg");
+    color:themed("textColor");
     z-index: 999;
     gap: 20px;
 
@@ -46,7 +46,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        border: 1px solid  rgb(199, 194, 194);
+        border: 1px solid themed("border");
         border-radius: 5px;
         padding: 5px;
 
@@ -54,7 +54,7 @@
           border: none;
           width: 500px;
           background-color: transparent;
-        //   color: themed("textColor");
+          color: themed("textColor");
 
         //   @include mobile{
         //     display: none;
@@ -86,3 +86,4 @@
       }
     }
   }
+}

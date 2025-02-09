@@ -1,13 +1,13 @@
-// @import "../../style.scss";
+@import "../../style.scss";
 
 .rightBar {
-//   @include themify($themes) {
+  @include themify($themes) {
     flex: 3;
     position: sticky;
     top: 70px;
     height: calc(100vh - 70px);
     overflow: scroll;
-    // background-color: themed("bgSoft");
+    background-color: themed("bgSoft");
 
     // @include mobile{
     //   display: none;
@@ -33,6 +33,7 @@
 
         span {
           color: gray;
+          
         }
 
         .user {
@@ -41,10 +42,14 @@
           justify-content: space-between;
           margin: 20px 0px;
 
+          .minutes{
+            font-size: 12px;  // increased from 5px as that might be too small to see
+            color: #999; 
+          }
           .userInfo {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
             position: relative;
 
             img {
@@ -64,15 +69,18 @@
               left: 30px;
             }
 
-            // p {
-            // //   color: themed("textColorSoft");
-            // }
+            p {
+              color: themed("textColorSoft");
+                font-size: 12px; 
+            }
 
             span {
+              font-size: 18px;
               font-weight: 500;
             //   color: themed("textColor");
             }
           }
+          
 
           .buttons {
             display: flex;
@@ -109,5 +117,5 @@
         }
       }
     }
-//   }
+}
 }

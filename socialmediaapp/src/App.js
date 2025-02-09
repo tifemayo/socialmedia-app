@@ -15,22 +15,30 @@ import Profile from "./pages/profile/Profile"
 import NavBar from './components/navbar/navbar';
 import RightBar from './components/rightbar/rightbar';
 import LeftBar from './components/leftbar/leftbar';
+import "./style.scss";
+import { useContext } from "react";
+import { DarkModeContext } from "./context/darkModeContext";
+import { AuthContext } from "./context/authContext";
 
 
 
 
 function App() {
 
-  const activeUser = true;
+  const {currentUser} = useContext(AuthContext);
+  
+  const { darkMode } = useContext(DarkModeContext);
 
   const Layout = () => {
     return (
      
-        <div>
+        <div className={`theme-${darkMode ? "dark" : "light"}`}>
           <NavBar />
           <div style ={{ display: "flex"}}>
             <LeftBar />
-            <Outlet />
+            <div style={{ flex: 6 }}>
+               <Outlet />
+            </div>
             <RightBar />
           </div>
         </div>
@@ -39,12 +47,12 @@ function App() {
 
   //Checks if user is logged in to see profile page
   const  ProtectedRoute = ({children}) =>{
-    if (!activeUser){
-      return <Navigate to="/login"/>
-
+    if (!currentUser) {
+      return <Navigate to="/login" />;
     }
-    return children
-  }
+
+    return children;
+  };
   const Router = createBrowserRouter([
     {
       path: "/",

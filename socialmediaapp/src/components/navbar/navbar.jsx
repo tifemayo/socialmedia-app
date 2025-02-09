@@ -10,18 +10,28 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { Link } from "react-router-dom";
 import profileImg from '../../images/girl-afro (1).jpg';
+import { useContext } from "react";
+import { DarkModeContext } from "../../context/darkModeContext";
+import { AuthContext } from "../../context/authContext";
 
 
 const NavBar = () => {
+    const { toggle, darkMode } = useContext(DarkModeContext);
+    const { currentUser } = useContext(AuthContext);
+
     return(
         <div className="navbar"> 
             <div className="left">
-            <Link to ="/" style={{textDecoration:"none"}}>
-                <span>UniFEED</span>
-            
-            </Link>
-            <HomeRoundedIcon/>
-                <DarkModeOutlinedIcon/>
+                <Link to ="/" style={{textDecoration:"none"}}>
+                    <span>UniFEED</span>
+                
+                </Link>
+                <HomeRoundedIcon/>
+                {darkMode ? (
+                    <WbSunnyOutlinedIcon onClick={toggle} />
+                ) : (
+                    <DarkModeOutlinedIcon onClick={toggle} />
+                )}
                 <WidgetsRoundedIcon />
             </div>   
             <div className="right">
@@ -33,8 +43,8 @@ const NavBar = () => {
                 <ChatBubbleRoundedIcon/>
                 <NotificationsOutlinedIcon/>
                 <div className="user">
-                    <img src={profileImg} alt="" />
-                    <span>Tife Mayo</span>
+                    <img src={currentUser.profilePic} alt="" />
+                    <span>{currentUser.name}</span>
                 </div>
             </div>
         </div>
