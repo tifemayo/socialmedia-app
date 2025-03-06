@@ -7,6 +7,8 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Link } from "react-router-dom";
 import Comments from "../comments/Comments";
 import { useState } from "react";
+import Instagram from "../../assets/instagram.png";
+import TikTok from "../../assets/tik-tok.png";
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
@@ -30,7 +32,11 @@ const Post = ({ post }) => {
               <span className="date">1 min ago</span>
             </div>
           </div>
-          <MoreHorizIcon />
+          <div className="icon-container">
+            <img src={Instagram} alt="" />
+            <MoreHorizIcon />
+          </div>
+
         </div>
         <div className="content">
           <p>{post.desc}</p>

@@ -16,6 +16,19 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        
+        .icon-container {
+          display: flex;
+          flex-direction: column; /* Stack elements vertically */
+          align-items: center; /* Center them horizontally */
+          // gap: 5px; /* Space between the two icons */
+        }
+        img {
+          width: 30px !important;
+          height: 30px !important;
+          object-fit: contain;
+
+        }
 
         .userInfo {
           display: flex;

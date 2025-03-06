@@ -22,11 +22,14 @@ const NavBar = () => {
     return(
         <div className="navbar"> 
             <div className="left">
-                <Link to ="/" style={{textDecoration:"none"}}>
+                <Link to ="/"  className="logo-link" style={{textDecoration:"none"}}>
                     <span>UniFEED</span>
-                
                 </Link>
-                <HomeRoundedIcon/>
+                <Link to ="/"  style={{textDecoration:"none"}}>
+                    <HomeRoundedIcon/>
+                </Link>
+               
+                
                 {darkMode ? (
                     <WbSunnyOutlinedIcon onClick={toggle} />
                 ) : (

@@ -10,9 +10,9 @@
     background-color: themed("bg");
     color: themed("textColor");
 
-    // @include mobile{
-    //   display: none;
-    // }
+    @include mobile{
+      display: none;
+    }
 
     &::-webkit-scrollbar {
       display: none;
@@ -26,6 +26,18 @@
         border: none;
         height: 0.5px;
         background-color: themed("border");
+      }
+      a {  // targets Link component
+        text-decoration: none;
+        color: inherit;
+        
+        &:hover {
+          // hover styles
+        }
+  
+        span {
+          // span styles inside Link
+        }
       }
 
       .menu {

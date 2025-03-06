@@ -18,6 +18,7 @@ import TikTok from "../../assets/tik-tok.png";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import { AuthContext } from "../../context/authContext";
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 
 const LeftBar = () => {
     const { currentUser } = useContext(AuthContext);
@@ -26,13 +27,15 @@ const LeftBar = () => {
       <div className="leftBar">
         <div className="container">
           <div className="menu">
-            <div className="user">
-              <img
-                src={currentUser.profilePic}
-                alt=""
-              />
-              <span>{currentUser.name}</span>
-            </div>
+            <Link to="/profile/1" style={{textDecoration:"none"}}>
+                <div className="user">
+                <img
+                    src={currentUser.profilePic}
+                    alt=""
+                />
+                <span>{currentUser.name}</span>
+                </div>
+            </Link>
             <div className="item">
                 <PeopleIcon/>
             {/* <img src={following} alt="" /> */}
