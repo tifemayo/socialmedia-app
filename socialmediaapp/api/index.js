@@ -13,6 +13,9 @@ import cookieParser from "cookie-parser";
 //middleware 
 app.use(express.json())
 app.use(cors());
+
+
+// Instead of sending the user ID in the body , the cookie helps to handle all ID related access
 app.use(cookieParser());
 
 
