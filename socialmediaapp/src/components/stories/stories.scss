@@ -50,6 +50,7 @@
       @include mobile {
         display: none;
       }
+      // can take it out to make a gradient
       &::after {
         content: '';
         position: absolute;
