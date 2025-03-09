@@ -18,12 +18,27 @@ export const register = (req,res) => {
             const saltRound = bcrypt.genSaltSync(10);
             const hashedPassword = bcrypt.hashSync(req.body.password, saltRound);
 
-            const q = "INSERT INTO users (`username`,`email`,`password`,`name`) VALUE (?)";
+            const insertQ = "INSERT INTO users (`username`,`email`,`password`,`name`) VALUE (?)";
 
             const values = [req.body.username,req.body.email, hashedPassword,req.body.name,];
-            db.query(q, [values], (err, data) => {
+
+            db.query(insertQ , [values], (err, data) => {
                 if (err) return res.status(500).json(err);
-                return res.status(200).json("User has been created.");
+
+                // Get the inserted user's ID
+                const userId = data.insertId;
+                
+                // Create token
+                const token = jwt.sign({ id: userId }, "secretkey");
+
+                // Return token in cookie
+                res
+                    .cookie("accessToken", token, {
+                    httpOnly: true,
+                    })
+                    .status(200)
+                    .json({ message: "User has been created successfully", userId: userId});
+
               });
     });
 

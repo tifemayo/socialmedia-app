@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Register.scss";
 import axios from "axios";
 import { useState } from "react";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     username: "",
     email: "",
@@ -19,7 +20,12 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:8800/api/auth/register", inputs);
+      const res = await axios.post("http://localhost:8800/api/auth/register", inputs);
+      if (res.data.userId) {
+        localStorage.setItem("userId", res.data.userId);
+      }
+      // Change this line from navigate("/login") to:
+      navigate("/platforms");
     } catch (err) {
       setErr(err.response.data);
     }

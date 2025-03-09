@@ -1,6 +1,8 @@
 import React from 'react';
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
+import PlatformSelection from "./pages/platforms/PlatformSelection";
+
 import {
   createBrowserRouter,
   RouterProvider,
@@ -79,6 +81,10 @@ function App() {
     {
       path: "/register",
       element: <Register/>,
+    },
+    {
+      path: "/platforms",
+      element: <PlatformSelection />,
     },
   ]);
   
