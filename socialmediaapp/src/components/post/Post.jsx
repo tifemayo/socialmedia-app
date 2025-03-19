@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import Comments from "../comments/Comments";
 import { useState } from "react";
 import Instagram from "../../assets/instagram.png";
-import TikTok from "../../assets/tik-tok.png";
+// import TikTok from "../../assets/tik-tok.png";
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);

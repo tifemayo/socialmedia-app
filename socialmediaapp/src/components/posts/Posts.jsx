@@ -1,33 +1,28 @@
 import Post from "../post/Post";
 import "./posts.scss";
-import post1 from '../../images/girl-afro.jpg';
-import post2 from '../../images/comic-book-lifestyle-scene-with-friends_23-2151133652.avif';
-import post3 from '../../images/side-view-anime-style-man-portrait.jpg';
-const Posts = () => {
-  //TEMPORARY
-  const posts = [
-    {
-      id: 1,
-      name: "Elsa Majimbo",
-      userId: 1,
-      profilePic: post1,
-      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-      img: post2,
-    },
-    {
-      id: 2,
-      name: "Marai",
-      userId: 2,
-      profilePic: post3,
-      desc: "Tenetur iste voluptates dolorem rem commodi voluptate pariatur, voluptatum, laboriosam consequatur enim nostrum cumque! Maiores a nam non adipisci minima modi tempore.",
-    },
-  ];
+import { useQuery } from "@tanstack/react-query";
+import { makeRequest } from "../../axios";
 
-  return <div className="posts">
-    {posts.map(post=>(
-      <Post post={post} key={post.id}/>
-    ))}
-  </div>;
+const Posts = () => {
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["posts"],
+    queryFn: async () => {
+      const response = await makeRequest.get("/posts", {
+        withCredentials: true  // This ensures cookies are sent with the request
+      });
+      return response.data;
+    }
+  });
+
+  return (
+    <div className="posts">
+      {error
+        ? "Something went wrong!"
+        : isLoading
+        ? "loading"
+        : data.map((posts) => <Post post={posts} key={posts.id} />)}
+    </div>
+  );
 };
 
 export default Posts;

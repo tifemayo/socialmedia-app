@@ -33,7 +33,7 @@ const LeftBar = () => {
                     src={currentUser.profilePic}
                     alt=""
                 />
-                <span>{currentUser.name}</span>
+                <span>{currentUser.username}</span>
                 </div>
             </Link>
             <div className="item">

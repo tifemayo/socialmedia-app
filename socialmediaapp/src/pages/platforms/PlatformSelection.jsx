@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./PlatformSelection.scss";
+import Instagram from "../../assets/instagram.png";
+import TikTok from "../../assets/tik-tok.png";
+import Puzzle from "../../assets/puzzle.png";
 
 const platforms = [
-  { id: "instagram", name: "Instagram" },
-  { id: "tiktok", name: "TikTok" },
-  { id: "twitter", name: "Twitter" }
+  { id: "instagram", name: "Instagram" , image: Instagram},
+  { id: "tiktok", name: "TikTok", image: TikTok},
+  { id: "unifeed", name: "Unifeed (Default)", image: Puzzle}
 ];
 
 const PlatformSelection = () => {
@@ -62,7 +65,7 @@ const PlatformSelection = () => {
 
   return (
     <div className="platform-selection">
-      <h2>Select Platforms to Follow</h2>
+      <h2>Select Platforms to Connect</h2>
       
       {error && <div className="error-message">{error}</div>}
       
@@ -76,7 +79,13 @@ const PlatformSelection = () => {
             onClick={() => handleToggle(platform.id)}
             disabled={loading}
           >
-            {platform.name}
+            <img 
+              src={platform.image} 
+              alt={platform.name} 
+              className="platform-icon"
+            />
+             <span className="platform-name">{platform.name}</span>
+
           </button>
         ))}
       </div>
