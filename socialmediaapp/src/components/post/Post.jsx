@@ -9,6 +9,7 @@ import Comments from "../comments/Comments";
 import { useState } from "react";
 import Instagram from "../../assets/instagram.png";
 // import TikTok from "../../assets/tik-tok.png";
+import moment from "moment";
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
@@ -29,7 +30,7 @@ const Post = ({ post }) => {
               >
                 <span className="name">{post.name}</span>
               </Link>
-              <span className="date">1 min ago</span>
+              <span className="date">{moment(post.createdAt).fromNow()}</span>
             </div>
           </div>
           <div className="icon-container">
@@ -40,7 +41,8 @@ const Post = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img src={post.img} alt="" />
+          <img src={"/upload/" + post.img} alt="" />
+          {/* {post.img && <img src={`http://localhost:8800/upload/${post.img}`} alt="" />} */}
         </div>
         <div className="info">
           <div className="item">
