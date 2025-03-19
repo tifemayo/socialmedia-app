@@ -1,8 +1,9 @@
 import express from "express";
-// import { } from "../controllers/comments.js";
+import { getComments, addComment } from "../controllers/comments.js";
 const router = express.Router()
 
-router.get("", )
+router.get("/", getComments)
+router.post("/", addComment)
 // router.put("/", updateUser)
 
 
