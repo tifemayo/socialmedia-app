@@ -6,19 +6,21 @@ import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Link } from "react-router-dom";
 import Comments from "../comments/Comments";
+import PlatformIcon from "../PlatformIcon/PlatformIcon";
 import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
-import Instagram from "../../assets/instagram.png";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import moment from "moment";
+
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const { currentUser } = useContext(AuthContext);
 
   //get the likes from the back end 
+
   const { isLoading, error, data } = useQuery({
     queryKey: ["likes", post.id],
     queryFn: () => makeRequest.get(`/likes?postId=${post.id}`).then(res => res.data),
@@ -61,7 +63,8 @@ const Post = ({ post }) => {
             </div>
           </div>
           <div className="icon-container">
-            <img src={Instagram} alt="" />
+            {/* <img src={Instagram} alt="" /> */}
+            <PlatformIcon platform={post.platform} />
             <MoreHorizIcon />
           </div>
 
@@ -88,7 +91,8 @@ const Post = ({ post }) => {
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
-            12 Comments
+            {/* revisit to show number of comments  */}
+            Comments
           </div>
           <div className="item">
             <ShareOutlinedIcon />

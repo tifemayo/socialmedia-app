@@ -22,6 +22,7 @@ export const getPosts = (req, res) => {
 
     db.query(q, [userInfo.id , userInfo.id], (err, data) => {
       if (err) return res.status(500).json(err);
+      // console.log(err)
       return res.status(200).json(data);
     });
   });
@@ -35,13 +36,17 @@ export const addPost = (req, res) => {
     if (err) return res.status(403).json("Token is not valid!");
 
     const q =
-      "INSERT INTO posts(`desc`, `img`, `createdAt`, `userId`) VALUES (?)";
+      "INSERT INTO posts(`desc`, `img`, `platform`, `createdAt`, `userId` ) VALUES (?)";
     const values = [
       req.body.desc,
       req.body.img,
+      req.body.platform,
       moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
       userInfo.id,
     ];
+    
+    console.log("Inserting post with values:", values); // Debug log
+
     
     db.query(q, [values], (err, data) => {
       if (err) return res.status(500).json(err);

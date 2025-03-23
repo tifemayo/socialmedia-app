@@ -12,9 +12,16 @@ import Posts from "../../components/posts/Posts";
 import post1 from '../../images/girl-afro.jpg';
 import post2 from '../../images/comic-book-lifestyle-scene-with-friends_23-2151133652.avif';
 import post3 from '../../images/side-view-anime-style-man-portrait.jpg';
-
+// import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+// import { makeRequest } from "../../axios";
 
 const Profile = () => {
+
+  // const { isLoading, error, data } = useQuery({
+  //   queryKey: ["likes", post.id],
+  //   queryFn: () => makeRequest.get(`/likes?postId=${post.id}`).then(res => res.data),
+  // });
+
   return (
     <div className="profile">
       <div className="images">

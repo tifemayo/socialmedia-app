@@ -41,7 +41,7 @@ export const getUserPlatforms = (req, res) => {
     return res.status(400).json({ message: "User ID is required" });
   }
   
-  const query = "SELECT platform_name FROM user_platforms WHERE user_id = ?";
+  const query = "SELECT UP.* FROM user_platforms AS UP WHERE user_id = ?";
   
   db.query(query, [userId], (err, data) => {
     if (err) return res.status(500).json({ error: err.message });

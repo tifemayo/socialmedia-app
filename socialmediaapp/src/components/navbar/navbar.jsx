@@ -23,7 +23,7 @@ const NavBar = () => {
         <div className="navbar"> 
             <div className="left">
                 <Link to ="/"  className="logo-link" style={{textDecoration:"none"}}>
-                    <span>UniFEED</span>
+                    <span>Unifeed</span>
                 </Link>
                 <Link to ="/"  style={{textDecoration:"none"}}>
                     <HomeRoundedIcon/>

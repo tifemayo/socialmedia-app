@@ -1,16 +1,42 @@
 import "./share.scss";
 import Image from "../../assets/img.png";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Map from "../../assets/map.png";
 import Friend from "../../assets/friend.png";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
+import PlatformIcon from "../PlatformIcon/PlatformIcon";
+import axios from "axios";
 
 const Share = () => {
 
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
+  const [selectedPlatforms, setSelectedPlatforms] = useState([]);
+  const [userPlatforms, setUserPlatforms] = useState([]);
+  const [showPlatformSelect, setShowPlatformSelect] = useState(false);
+  const {currentUser} = useContext(AuthContext);
+
+  const handlePlatformClick = () => {
+    console.log("Platform button clicked"); // Debug log
+    setShowPlatformSelect(!showPlatformSelect);
+  };
+  
+  useEffect(() => {
+    const fetchUserPlatforms = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8800/api/platforms?userId=${currentUser.id}`, {
+          withCredentials: true
+        });
+        setUserPlatforms(response.data);
+      } catch (error) {
+        console.error("Error fetching platforms:", error);
+      }
+    };
+    fetchUserPlatforms();
+  }, [currentUser.id]);
 
   const upload = async () => {
     try {
@@ -23,7 +49,7 @@ const Share = () => {
     }
   };
 
-  const {currentUser} = useContext(AuthContext)
+ 
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -35,14 +61,33 @@ const Share = () => {
         queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
+  const handlePlatformToggle = (platform) => {
+    setSelectedPlatforms(prev => 
+      prev.includes(platform)
+        ? prev.filter(p => p !== platform)
+        : [...prev, platform]
+    );
+  };
 
   const handleClick = async (e) => {
     e.preventDefault();
     let imgUrl = "";
     if (file) imgUrl = await upload();
-    mutation.mutate({ desc, img: imgUrl });
+    // Create a post for each selected platform
+    for (const platform of selectedPlatforms) {
+      const postData = {
+        desc,
+        img: imgUrl,
+        platform
+      };
+      console.log("Creating post for platform:", postData); // Debug log
+      mutation.mutate(postData);
+    }
+
     setDesc("");
     setFile(null);
+    setSelectedPlatforms([]);
+    setShowPlatformSelect(false);
   };
 
   return (
@@ -62,27 +107,50 @@ const Share = () => {
             )}
           </div>
         </div>
+   
+        {/* <div className="platforms-section">
+          <span>Share to:</span>
+          <div className="platform-list">
+            {userPlatforms.map((platform) => (
+              <div 
+                key={platform}
+                className={`platform-item ${selectedPlatforms.includes(platform) ? 'selected' : ''}`}
+                onClick={() => handlePlatformToggle(platform)}
+              >
+                <PlatformIcon platform={platform} />
+                <span>{platform}</span>
+              </div>
+            ))}
+          </div> */}
+        {/* </div> */}
         <hr />
         <div className="bottom">
           <div className="left">
             <input type="file" id="file" style={{display:"none"}} onChange={(e) => setFile(e.target.files[0])}/>
             <label htmlFor="file">
               <div className="item">
-                <img src={Image} alt="" />
+                <AddCircleOutlineIcon/>
                 <span>Add Image</span>
               </div>
             </label>
-            <div className="item">
-              <img src={Map} alt="" />
-              <span>Add Place</span>
+            <div className="platforms-inline">
+              <span>Select Platform:</span>
+              {userPlatforms.map((platform) => (
+                <div 
+                  key={platform}
+                  className={`item ${selectedPlatforms.includes(platform) ? 'selected' : ''}`}
+                  onClick={() => handlePlatformToggle(platform)}
+                >
+                  <PlatformIcon platform={platform} />
+                  <span>{platform}</span>
+                </div>
+              ))}
             </div>
-            <div className="item">
-              <img src={Friend} alt="" />
-              <span>Tag Friends</span>
-            </div>
+           
+           
           </div>
           <div className="right">
-            <button onClick={handleClick}>Share</button>
+            <button onClick={handleClick} disabled={!desc || selectedPlatforms.length === 0} >Share</button>
           </div>
         </div>
       </div>

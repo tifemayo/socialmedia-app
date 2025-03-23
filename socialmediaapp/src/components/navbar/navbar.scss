@@ -1,4 +1,5 @@
 @import "../../style.scss";
+@import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
 
 .navbar {
   @include themify($themes) {
@@ -25,7 +26,7 @@
         color: inherit;
         
         &:hover {
-          // hover styles
+          opacity: 0.8; /* Subtle hover effect */
         }
   
         span {
@@ -34,13 +35,17 @@
       }
 
       .logo-link {
-        font-weight: bold;
-        font-size: 30px;
-        font-family: 'Poppins', sans-serif;  // soft font
-        background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59);
+        font-weight: 100;
+        font-style: normal;
+        font-size: 25px;
+        font-family: "Boldonse", system-ui;
+        // background: linear-gradient(135deg, #4a0080, #a3008c, #e91e63);
+        
+        background: radial-gradient(circle at center, #ce6bf3, #bd34d8,#8b18a2);
         -webkit-background-clip: text;  // for webkit browsers
         background-clip: text;
-        color: transparent;  
+        color: transparent; 
+        letter-spacing: 0.04em;
         // color: themed("logo");
       }
 
