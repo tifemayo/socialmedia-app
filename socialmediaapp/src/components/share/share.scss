@@ -54,6 +54,16 @@
               border-radius: 4px;
             }
           }
+          .cancel {
+            position: absolute;
+            cursor: pointer;
+            color: themed("textColor");
+            background-color: themed("bgSoft");
+            padding: 0px 2px 0px 3px;
+            border-radius: 5%;
+            
+    
+          }
         }
 
     

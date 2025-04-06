@@ -83,6 +83,14 @@ const Share = () => {
     
   };
 
+  const handleDeletePreview = () => {
+    if (file) {
+      URL.revokeObjectURL(URL.createObjectURL(file));
+    }
+    setFile(null);
+    setMediaType(null);
+  };
+
   // pushes the post to the backend and clears the form
   const handleClick = async (e) => {
     e.preventDefault();
@@ -122,14 +130,19 @@ const Share = () => {
           </div>
           <div className="right">
           {file && (
-            mediaType === 'image' ? (
+            <>
+            {mediaType === 'image' ? (
               <img className="file" alt="" src={URL.createObjectURL(file)} />
             ) : mediaType === 'video' ? (
               <video className="file" controls width="100%" preload="metadata">
                 <source src={URL.createObjectURL(file)} type={file.type} />
                 Your browser does not support the video tag.
               </video>
-            ) : null)}
+            ) : null}
+              <span className="cancel" onClick={handleDeletePreview}> x </span>
+            </>
+            )}
+            
           </div>
         </div>
    
