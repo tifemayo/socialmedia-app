@@ -71,7 +71,18 @@ const Post = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img src={"/upload/" + post.img} alt="" />
+          {(post.media) && (
+            <div className="mediaContainer">
+              {post.mediaType === 'video' ? (
+                <video controls autoPlay playsInline className="media">
+                  <source src={"/upload/" + (post.media)} />
+                  Your browser does not support video playback.
+                </video>
+              ) : (
+                <img src={"/upload/" + (post.media)} alt="" className="media" />
+              )}
+            </div>
+          )}
           {/* {post.img && <img src={`http://localhost:8800/upload/${post.img}`} alt="" />} */}
         </div>
         <div className="info">
