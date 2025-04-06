@@ -85,6 +85,7 @@ const Posts = () => {
   return (
     <div className="postcontainer">
       <div className="platformFilter">
+   
           <button
             onClick={() =>  handlePlatformClick("all")}
             className={`button ${selectedPlatforms.length === 0 ? "active" : ""}`}

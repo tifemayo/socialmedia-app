@@ -1,5 +1,59 @@
-.posts{
-  display: flex;
-  flex-direction: column;
-  gap: 50px;
+@import "../../style.scss";
+
+.postcontainer {
+  @include themify($themes) {
+    .platformFilter {
+      display: flex;
+      gap: 15px;
+      padding: 20px;
+      background-color: themed("bg");
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      flex-wrap: wrap;
+      justify-content: center; 
+      align-items: center;      
+
+      .button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 4px;  // Changed from 20px to 4px for more square appearance
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid themed("border");
+        background-color: themed("bg");
+        color: themed("textColorSoft");
+
+        &:hover {
+          background-color: themed("bgSoft");
+        }
+
+        &.active {
+          background-color: #a63ae4;  // Solid purple background
+          border: none;               // Remove border
+          color: #ffffff;             // White text for contrast
+          font-weight: 500;           // Keep text slightly bold
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  // Subtle shadow
+          transform: translateY(-1px); // Slight lift effect
+        }
+
+        img {
+          width: 20px;
+          height: 20px;
+        }
+
+        span {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .posts {
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
+    }
+  }
 }
