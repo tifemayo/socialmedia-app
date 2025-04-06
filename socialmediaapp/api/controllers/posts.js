@@ -36,10 +36,11 @@ export const addPost = (req, res) => {
     if (err) return res.status(403).json("Token is not valid!");
 
     const q =
-      "INSERT INTO posts(`desc`, `img`, `platform`, `createdAt`, `userId` ) VALUES (?)";
+      "INSERT INTO posts(`desc`, `media`, `mediaType`, `platform`, `createdAt`, `userId` ) VALUES (?)";
     const values = [
       req.body.desc,
-      req.body.img,
+      req.body.media,
+      req.body.mediaType, 
       req.body.platform,
       moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
       userInfo.id,

@@ -46,6 +46,13 @@
             height: 100px;
             object-fit: cover;
             border-radius: 0px;
+
+            &:is(video) {
+              width: 100%;
+              height: auto;
+              background: #000;
+              border-radius: 4px;
+            }
           }
         }
 

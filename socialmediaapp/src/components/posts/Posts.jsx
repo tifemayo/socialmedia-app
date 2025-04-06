@@ -65,23 +65,6 @@ const Posts = () => {
   : data?.filter(post => selectedPlatforms.includes(post.platform ));
 
 
-  // useEffect(() => {
-  //   filterPlatforms();
-  // }, [selectedPlatforms]);
-
-  // const filterPlatforms =() => {
-  //   if (selectedPlatforms.length > 0) {
-  //     let tempPosts = selectedPlatforms.map((selectedCategory) => {
-  //       let temp = data?.filter(post => post.platform === selectedCategory);
-  //       return temp;
-  //     });
-  //     setFilteredPosts(tempPosts.flat());
-  //   } else {
-  //     setFilteredPosts([...data]);
-  //   }
-
-  // };
-
   return (
     <div className="postcontainer">
       <div className="platformFilter">

@@ -18,6 +18,7 @@ const Share = () => {
   const [userPlatforms, setUserPlatforms] = useState([]);
   const [showPlatformSelect, setShowPlatformSelect] = useState(false);
   const {currentUser} = useContext(AuthContext);
+  const [mediaType, setMediaType] = useState(null);
 
   const handlePlatformClick = () => {
     console.log("Platform button clicked"); // Debug log
@@ -68,27 +69,45 @@ const Share = () => {
         : [...prev, platform]
     );
   };
+  //Handles the preview of changing media files and setting the media type based on file extension
+  const handleMediaChange= (e) => {
+    const media = e.target.files[0];
+    if (media) {
+      if (file) {
+        URL.revokeObjectURL(URL.createObjectURL(file));
+      }
+      const type = media.type.split('/')[0]; // checks media type starts with 'image' or 'video' OR media.type.startsWith('image') ? 'image' : 'video'
+      setFile(media);
+      setMediaType(type);
+    }
+    
+  };
 
+  // pushes the post to the backend and clears the form
   const handleClick = async (e) => {
     e.preventDefault();
-    let imgUrl = "";
-    if (file) imgUrl = await upload();
+    let mediaUrl = "";
+    if (file) mediaUrl = await upload();
     // Create a post for each selected platform
     for (const platform of selectedPlatforms) {
       const postData = {
         desc,
-        img: imgUrl,
+        media: mediaUrl,
+        mediaType: mediaType,
         platform
       };
       console.log("Creating post for platform:", postData); // Debug log
       mutation.mutate(postData);
     }
+    
 
     setDesc("");
     setFile(null);
+    setMediaType(null);
     setSelectedPlatforms([]);
     setShowPlatformSelect(false);
   };
+ 
 
   return (
     <div className="share">
@@ -99,38 +118,30 @@ const Share = () => {
               src={currentUser.profilePic}
               alt=""
             />
-            <input type="text" placeholder={`What's on your mind ${currentUser.name}?`} onChange={(e) => setDesc(e.target.value)} value={desc} />
+            <input type="text" placeholder={`What's on your mind ${currentUser.name}?`} onChange={(e) => setDesc(e.target.value)}  value={desc} />
           </div>
           <div className="right">
           {file && (
+            mediaType === 'image' ? (
               <img className="file" alt="" src={URL.createObjectURL(file)} />
-            )}
+            ) : mediaType === 'video' ? (
+              <video className="file" controls width="100%" preload="metadata">
+                <source src={URL.createObjectURL(file)} type={file.type} />
+                Your browser does not support the video tag.
+              </video>
+            ) : null)}
           </div>
         </div>
    
-        {/* <div className="platforms-section">
-          <span>Share to:</span>
-          <div className="platform-list">
-            {userPlatforms.map((platform) => (
-              <div 
-                key={platform}
-                className={`platform-item ${selectedPlatforms.includes(platform) ? 'selected' : ''}`}
-                onClick={() => handlePlatformToggle(platform)}
-              >
-                <PlatformIcon platform={platform} />
-                <span>{platform}</span>
-              </div>
-            ))}
-          </div> */}
-        {/* </div> */}
+        
         <hr />
         <div className="bottom">
           <div className="left">
-            <input type="file" id="file" style={{display:"none"}} onChange={(e) => setFile(e.target.files[0])}/>
+            <input type="file" id="file" style={{display:"none"}} onChange={handleMediaChange} accept="image/*,video/*"/>
             <label htmlFor="file">
               <div className="item">
                 <AddCircleOutlineIcon/>
-                <span>Add Image</span>
+                <span>Add Media</span>
               </div>
             </label>
             <div className="platforms-inline">
@@ -142,7 +153,7 @@ const Share = () => {
                   onClick={() => handlePlatformToggle(platform)}
                 >
                   <PlatformIcon platform={platform} />
-                  <span>{platform}</span>
+                  <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
                 </div>
               ))}
             </div>
