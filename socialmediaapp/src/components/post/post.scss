@@ -63,9 +63,11 @@
           .media {
             max-width: 100%;
             max-height: 500px;
-            object-fit: contain;
+            object-fit: cover;
+            width: 100%;
             
             &.video-media {
+              width: 100%;
               max-height: 400px;
               width: auto;
               display: block;

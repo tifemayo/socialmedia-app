@@ -74,7 +74,7 @@ const Post = ({ post }) => {
           {(post.media) && (
             <div className="mediaContainer">
               {post.mediaType === 'video' ? (
-                <video controls autoPlay playsInline className="media">
+                <video controls autoPlay muted loop className="media">
                   <source src={"/upload/" + (post.media)} />
                   Your browser does not support video playback.
                 </video>
