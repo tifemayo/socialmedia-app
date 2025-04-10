@@ -32,7 +32,7 @@ const Profile = () => {
   });
 
   // // uses to fetch followers from backend DB
-  const {  data: relationshipData } = useQuery({
+  const { isLoading: relationshipLoading, data: relationshipData } = useQuery({
     queryKey: ["relationship"],
     queryFn: () => makeRequest.get(`/relationships?followedUserId="${userId}`).then(res => res.data),
   });
@@ -43,13 +43,27 @@ const Profile = () => {
   if (userLoading ) return "Loading...";
   if (error) return "Error loading profile";
   if (!userData) return "No user data found";
-  const handleFollow = async () => {
-    try {
-      await makeRequest.put(`/users/${userId}/follow`);
-      userData.followers.push(currentUser.id);
-    } catch (error) {
-      console.error("Error following user:", error);
+
+  const queryClient = useQueryClient();
+
+  // mutation to follow a user
+  const mutation = useMutation(
+    (following) => {
+      if (following)
+        return makeRequest.delete("/relationships?userId=" + userId);
+      return makeRequest.post("/relationships", { userId });
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries(["relationship"]);
+      },
     }
+  );
+
+  //function to handle follow user request
+  const handleFollow = async () => {
+    mutation.mutate(relationshipData.includes(currentUser.id));
   };
  
 
@@ -102,20 +116,24 @@ const Profile = () => {
                   <span>tife.mayo.com</span>
                 </div>
               </div>
-            {
+            { relationshipLoading ? (
+                  "loading"
+                ) : (
               userId === currentUser.id ? (
                 <a href="/editprofile">
                   <button>Edit Profile</button>
                 </a>
-              ) : <button onClick={handleFollow}>follow</button>
-            } 
+              ) : <button onClick={handleFollow}>{relationshipData.includes(currentUser.id)
+                ? "Following"
+                : "Follow"}</button>
+           ) } 
             </div>
             <div className="right">
               <EmailOutlinedIcon />
               <MoreVertIcon />
             </div>
           </div>
-        <Posts />
+        <Posts userId={userId}/>
         </div>
         </>
       )}
