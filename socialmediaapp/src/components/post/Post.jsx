@@ -19,8 +19,7 @@ const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const { currentUser } = useContext(AuthContext);
 
-  //get the likes from the back end 
-
+  //get/fetch the likes from the back end for the post
   const { isLoading, error, data } = useQuery({
     queryKey: ["likes", post.id],
     queryFn: () => makeRequest.get(`/likes?postId=${post.id}`).then(res => res.data),

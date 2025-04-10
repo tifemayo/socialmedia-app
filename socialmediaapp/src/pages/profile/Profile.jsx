@@ -13,41 +13,44 @@ import post1 from '../../images/girl-afro.jpg';
 import post2 from '../../images/comic-book-lifestyle-scene-with-friends_23-2151133652.avif';
 import post3 from '../../images/side-view-anime-style-man-portrait.jpg';
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useContext, useState, useEffect } from "react";
+import axios from "axios";
 import { makeRequest } from "../../axios";
 import { useLocation } from "react-router-dom";
+import { AuthContext } from "../../context/authContext";
 import PlatformIcon from "../../components/PlatformIcon/PlatformIcon";
 
 const Profile = () => {
 
  // extracts the userId from the URL pathname using the useLocation hook
   const userId = parseInt(useLocation().pathname.split("/")[2]);
+  const { currentUser } = useContext(AuthContext);
+  const [userPlatforms, setUserPlatforms] = useState([]);
 
 
  // uses useQuery hook to fetch user data from the server
   const { isLoading: userLoading, error, data: userData } = useQuery({
     queryKey: ["user", userId],
-    queryFn: () => makeRequest.get(`/users/find/ + userId`).then(res => res.data),
+    queryFn: () => makeRequest.get(`/users/find/${userId}`).then(res => res.data),
   });
+  // query to Fetch / get a socialmedia user's integrated platforms , using current userID from local storage 
 
-  //fetch user platforms
-   const { isLoading: platformsLoading, data: platforms } = useQuery({
-    queryKey: ["platforms", userId],
-    queryFn: () => makeRequest.get(`/platforms?userId=${userId}`).then(res => res.data),
-  });
 
-  if (userLoading || platformsLoading) return "Loading...";
+  if (userLoading ) return "Loading...";
+  if (error) return "Error loading profile";
+  if (!userData) return "No user data found";
  
 
   return (
     <div className="profile">
       <div className="images">
         <img
-          src= {userData.coverPic}
+          src= {userData?.coverPic || "/default-cover.jpg"}
           alt=""
           className="cover"
         />
         <img
-          src={userData.profilePic}
+          src={userData?.profilePic || "/default-cover.jpg"}
           alt=""
           className="profilePic"
         />
@@ -82,17 +85,6 @@ const Profile = () => {
                 <LanguageIcon />
                 <span>tife.mayo.com</span>
               </div>
-              <div className="platforms">
-                <h3>Connected Platforms</h3>
-                <div className="platform-list">
-                  {platforms?.map((platform) => (
-                    <div key={platform} className="platform-item">
-                      <PlatformIcon platform={platform} />
-                      <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
             <button>follow</button>
           </div>
@@ -101,7 +93,7 @@ const Profile = () => {
             <MoreVertIcon />
           </div>
         </div>
-      <Posts/>
+      <Posts />
       </div>
     </div>
   );

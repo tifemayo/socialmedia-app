@@ -45,7 +45,7 @@ const Posts = () => {
       return response.data;
     }
   });
-  console.log("Data is:", data);
+  // console.log("Data is:", data);
 
   
   // This main filter functionality helps to handle filtering post with one or more platforms based on selected plaftform buttons
