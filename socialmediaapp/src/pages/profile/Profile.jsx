@@ -24,6 +24,7 @@ const Profile = () => {
 
  // extracts the userId from the URL pathname using the useLocation hook
   const userId = parseInt(useLocation().pathname.split("/")[2]);
+  const queryClient = useQueryClient();
  
  // uses useQuery hook to fetch user data 
   const { isLoading: userLoading, error, data: userData } = useQuery({
@@ -33,39 +34,37 @@ const Profile = () => {
 
   // // uses to fetch followers from backend DB
   const { isLoading: relationshipLoading, data: relationshipData } = useQuery({
-    queryKey: ["relationship"],
-    queryFn: () => makeRequest.get(`/relationships?followedUserId="${userId}`).then(res => res.data),
+    queryKey: ["relationship", userId],
+    queryFn: () => makeRequest.get(`/relationships?followedUserId=${userId}`).then(res => res.data),
   });
   console.log(relationshipData);
 
+  // mutation to follow a user
+  // In your Profile.jsx file
+  
+  // Update the mutation implementation
+  const mutation = useMutation({
+    mutationFn: (following) => {
+      if (following)
+        return makeRequest.delete("/relationships?userId=" + userId);
+      return makeRequest.post("/relationships", { userId });
+    },
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries(["relationship"]);
+    },
+  });
+
+  //function to handle follow user request
+  const handleFollow = async () => {
+    mutation.mutate(relationshipData.includes(currentUser.id));
+  };
   
   // query to Fetch / get a socialmedia user's integrated platforms , using current userID from local storage 
   if (userLoading ) return "Loading...";
   if (error) return "Error loading profile";
   if (!userData) return "No user data found";
 
-  const queryClient = useQueryClient();
-
-  // mutation to follow a user
-  const mutation = useMutation(
-    (following) => {
-      if (following)
-        return makeRequest.delete("/relationships?userId=" + userId);
-      return makeRequest.post("/relationships", { userId });
-    },
-    {
-      onSuccess: () => {
-        // Invalidate and refetch
-        queryClient.invalidateQueries(["relationship"]);
-      },
-    }
-  );
-
-  //function to handle follow user request
-  const handleFollow = async () => {
-    mutation.mutate(relationshipData.includes(currentUser.id));
-  };
- 
 
   return (
     <div className="profile">

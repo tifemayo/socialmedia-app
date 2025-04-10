@@ -8,13 +8,12 @@ import { AuthContext } from "../../context/authContext";
 import { useContext, useState, useEffect } from "react";
 
 
-const Posts = () => {
+const Posts = ({userId}) => {
 
   //Functionality to filter posts by platforms 
   const { currentUser } = useContext(AuthContext);
   const [selectedPlatforms, setSelectedPlatforms] = useState([])
   const [userPlatforms, setUserPlatforms] = useState([]);
-
 
 
   // query to Fetch / get a socialmedia user's integrated platforms , using current userID from local storage 
@@ -36,10 +35,11 @@ const Posts = () => {
   }, [currentUser.id]);
   
   //query to fetch the data (posts) from backend 
+  //gets only user post in the profile page 
   const { isLoading, error, data } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
-      const response = await makeRequest.get("/posts", {
+      const response = await makeRequest.get("/posts?userTd="+userId, {
         withCredentials: true  // This ensures cookies are sent with the request
       });
       return response.data;
