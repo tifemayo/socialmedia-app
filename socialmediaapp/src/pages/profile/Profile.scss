@@ -39,24 +39,25 @@
       }
 
       .uInfo {
-        height: 180px;
         -webkit-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
         -moz-box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
         box-shadow: 0px 0px 25px -10px rgba(0, 0, 0, 0.38);
         border-radius: 20px;
         background-color: themed("bg");
         color: themed("textColor");
-        padding: 50px;
+        height: auto;
+        min-height: 180px;
+        padding: 50px 30px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 20px;
-
+        
         @include mobile{
           flex-direction: column;
-          height: 30vh;
-          padding: 20px;
+          padding: 20px 15px;
           margin-top: 100px;
+          gap: 20px;
         }
 
         .left {
@@ -67,9 +68,24 @@
           @include tablet{
             flex-wrap: wrap;
           }
+          
+          @include mobile{
+            justify-content: center;
+            margin-bottom: 10px;
+          }
 
           a{
             color: themed("textColorSoft");
+            
+            svg {
+              font-size: 20px; // Reduced icon size for all screens
+            }
+            
+            @include mobile{
+              svg {
+                font-size: 18px !important; 
+              }
+            }
           }
         }
 
@@ -81,8 +97,13 @@
           gap: 10px;
 
           span {
-            font-size: 30px;
+            padding-top: 10px;
+            font-size: 20px;
             font-weight: 500;
+            
+            @include mobile{
+              font-size: 20px;
+            }
           }
 
           .info {
@@ -90,6 +111,12 @@
             display: flex;
             align-items: center;
             justify-content: space-around;
+            flex-direction: column;
+            gap: 15px;
+            
+            @include mobile{
+              gap: 10px;
+            }
 
             .item {
               display: flex;
@@ -100,8 +127,61 @@
               span {
                 font-size: 12px;
               }
+              
+              @include mobile{
+                svg {
+                  font-size: 18px !important;
+                }
+              }
+            }
+            
+            .platforms {
+              width: 100%;
+              margin-top: 10px;
+              
+              h3 {
+                font-size: 16px;
+                color: themed("textColorSoft");
+                margin-bottom: 10px;
+                text-align: center;
+                
+                @include mobile{
+                  font-size: 14px;
+                }
+              }
+              
+              .platform-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center;
+                
+                .platform-item {
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  padding: 6px 12px;
+                  border-radius: 20px;
+                  background-color: themed("bgSoft");
+                  
+                  @include mobile{
+                    padding: 4px 10px;
+                    gap: 5px;
+                  }
+                  
+                  span {
+                    font-size: 14px;
+                    font-weight: 500;
+                    
+                    @include mobile{
+                      font-size: 12px;
+                    }
+                  }
+                }
+              }
             }
           }
+          
           button {
             border: none;
             background-color: #5271ff;
@@ -109,6 +189,11 @@
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
+            
+            @include mobile{
+              padding: 8px 16px;
+              font-size: 14px;
+            }
           }
         }
 
@@ -118,6 +203,14 @@
           align-items: center;
           justify-content: flex-end;
           gap: 10px;
+          
+          @include mobile{
+            justify-content: center;
+            
+            svg {
+              font-size: 22px !important;
+            }
+          }
         }
       }
     }

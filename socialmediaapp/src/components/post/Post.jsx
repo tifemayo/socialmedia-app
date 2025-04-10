@@ -4,7 +4,7 @@ import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Comments from "../comments/Comments";
 import PlatformIcon from "../PlatformIcon/PlatformIcon";
 import { useState } from "react";
@@ -18,6 +18,7 @@ import moment from "moment";
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   //get/fetch the likes from the back end for the post
   const { isLoading, error, data } = useQuery({
@@ -45,6 +46,12 @@ const Post = ({ post }) => {
     mutation.mutate(data.includes(currentUser.id));
   };
 
+  const handleProfileClick = (userId) => {
+    // Navigate to profile and scroll to top
+    navigate(`/profile/${userId}`);
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className="post">
       <div className="container">
@@ -52,12 +59,13 @@ const Post = ({ post }) => {
           <div className="userInfo">
             <img src={post.profilePic} alt="" />
             <div className="details">
-              <Link
-                to={`/profile/${post.userId}`}
-                style={{ textDecoration: "none", color: "inherit" }}
+              <span 
+                className="name" 
+                onClick={() => handleProfileClick(post.userId)}
+                style={{ cursor: "pointer" }}
               >
-                <span className="name">{post.name}</span>
-              </Link>
+                {post.name}
+              </span>
               <span className="date">{moment(post.createdAt).fromNow()}</span>
             </div>
           </div>

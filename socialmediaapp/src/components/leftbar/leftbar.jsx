@@ -53,7 +53,7 @@ const LeftBar = () => {
       <div className="leftBar">
         <div className="container">
           <div className="menu">
-            <Link to="/profile/1" style={{textDecoration:"none"}}>
+            <Link to={`/profile/${currentUser.id}`} style={{textDecoration:"none"}}>
                 <div className="user">
                 <img
                     src={currentUser.profilePic}

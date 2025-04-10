@@ -13,88 +13,103 @@ import post1 from '../../images/girl-afro.jpg';
 import post2 from '../../images/comic-book-lifestyle-scene-with-friends_23-2151133652.avif';
 import post3 from '../../images/side-view-anime-style-man-portrait.jpg';
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { useContext, useState, useEffect } from "react";
-import axios from "axios";
 import { makeRequest } from "../../axios";
 import { useLocation } from "react-router-dom";
+import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
-import PlatformIcon from "../../components/PlatformIcon/PlatformIcon";
 
 const Profile = () => {
 
+  const { currentUser } = useContext(AuthContext);
+
  // extracts the userId from the URL pathname using the useLocation hook
   const userId = parseInt(useLocation().pathname.split("/")[2]);
-  const { currentUser } = useContext(AuthContext);
-  const [userPlatforms, setUserPlatforms] = useState([]);
-
-
+ 
  // uses useQuery hook to fetch user data from the server
   const { isLoading: userLoading, error, data: userData } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => makeRequest.get(`/users/find/${userId}`).then(res => res.data),
   });
   // query to Fetch / get a socialmedia user's integrated platforms , using current userID from local storage 
-
-
   if (userLoading ) return "Loading...";
   if (error) return "Error loading profile";
   if (!userData) return "No user data found";
+  const handleFollow = async () => {
+    try {
+      await makeRequest.put(`/users/${userId}/follow`);
+      userData.followers.push(currentUser.id);
+    } catch (error) {
+      console.error("Error following user:", error);
+    }
+  };
  
 
   return (
     <div className="profile">
-      <div className="images">
-        <img
-          src= {userData?.coverPic || "/default-cover.jpg"}
-          alt=""
-          className="cover"
-        />
-        <img
-          src={userData?.profilePic || "/default-cover.jpg"}
-          alt=""
-          className="profilePic"
-        />
-      </div>
-      <div className="profileContainer">
-        <div className="uInfo">
-          <div className="left">
-            <a href="http://facebook.com">
-              <FacebookTwoToneIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <InstagramIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <TwitterIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <LinkedInIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <PinterestIcon fontSize="large" />
-            </a>
-          </div>
-          <div className="center">
-            <span>{userData.name}</span>
-            <div className="info">
-              <div className="item">
-                <PlaceIcon />
-                <span>lagos</span>
-              </div>
-              <div className="item">
-                <LanguageIcon />
-                <span>tife.mayo.com</span>
-              </div>
-            </div>
-            <button>follow</button>
-          </div>
-          <div className="right">
-            <EmailOutlinedIcon />
-            <MoreVertIcon />
-          </div>
+       {userLoading ? (
+        "loading"
+      ) : (
+        <>
+        <div className="images">
+          <img
+            src= {userData?.coverPic || "/default-cover.jpg"}
+            alt=""
+            className="cover"
+          />
+          <img
+            src={userData?.profilePic || "/default-cover.jpg"}
+            alt=""
+            className="profilePic"
+          />
         </div>
-      <Posts />
-      </div>
+        <div className="profileContainer">
+          <div className="uInfo">
+            <div className="left">
+              <a href="http://facebook.com">
+                <FacebookTwoToneIcon fontSize="large" />
+              </a>
+              <a href="http://facebook.com">
+                <InstagramIcon fontSize="large" />
+              </a>
+              <a href="http://facebook.com">
+                <TwitterIcon fontSize="large" />
+              </a>
+              <a href="http://facebook.com">
+                <LinkedInIcon fontSize="large" />
+              </a>
+              <a href="http://facebook.com">
+                <PinterestIcon fontSize="large" />
+              </a>
+            </div>
+            <div className="center">
+              <span>{userData.name}</span>
+              <div className="info">
+                <div className="item">
+                  <PlaceIcon />
+                  <span>lagos</span>
+                </div>
+                <div className="item">
+                  <LanguageIcon />
+                  <span>tife.mayo.com</span>
+                </div>
+              </div>
+            {
+              userId === currentUser.id ? (
+                <a href="/editprofile">
+                  <button>Edit Profile</button>
+                </a>
+              ) : <button onClick={handleFollow}>follow</button>
+            } 
+            </div>
+            <div className="right">
+              <EmailOutlinedIcon />
+              <MoreVertIcon />
+            </div>
+          </div>
+        <Posts />
+        </div>
+        </>
+      )}
     </div>
   );
 };
