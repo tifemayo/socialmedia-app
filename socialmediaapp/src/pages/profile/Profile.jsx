@@ -25,11 +25,20 @@ const Profile = () => {
  // extracts the userId from the URL pathname using the useLocation hook
   const userId = parseInt(useLocation().pathname.split("/")[2]);
  
- // uses useQuery hook to fetch user data from the server
+ // uses useQuery hook to fetch user data 
   const { isLoading: userLoading, error, data: userData } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => makeRequest.get(`/users/find/${userId}`).then(res => res.data),
   });
+
+  // // uses to fetch followers from backend DB
+  const {  data: relationshipData } = useQuery({
+    queryKey: ["relationship"],
+    queryFn: () => makeRequest.get(`/relationships?followedUserId="${userId}`).then(res => res.data),
+  });
+  console.log(relationshipData);
+
+  
   // query to Fetch / get a socialmedia user's integrated platforms , using current userID from local storage 
   if (userLoading ) return "Loading...";
   if (error) return "Error loading profile";

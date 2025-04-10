@@ -8,6 +8,7 @@ import commentRoutes from "./routes/comments.js";
 import likeRoutes from "./routes/likes.js";
 import userRoutes from "./routes/users.js"; 
 import platformRoutes from "./routes/platforms.js";
+import relationshipRoutes from "./routes/relationships.js";
 import cors from "cors";
 import multer from "multer";
 import path from "path";
@@ -52,6 +53,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/likes", likeRoutes);
 app.use("/api/platforms", platformRoutes);
+app.use("/api/relationships", relationshipRoutes);
 
 app.listen(8800,()=> {
     console.log("Connected to backend!")

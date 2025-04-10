@@ -1,6 +1,7 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
 
+//gets all user IDs who are following a particular user.
 export const getRelationships = (req,res)=>{
     const q = "SELECT followerUserId FROM relationships WHERE followedUserId = ?";
 
