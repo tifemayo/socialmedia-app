@@ -35,11 +35,13 @@ const Posts = ({userId}) => {
   }, [currentUser.id]);
   
   //query to fetch the data (posts) from backend 
-  //gets only user post in the profile page 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["posts"],
+    queryKey: ["posts", userId],
     queryFn: async () => {
-      const response = await makeRequest.get("/posts?userTd="+userId, {
+      // If userId is provided, fetch only that user's posts (for profile page)
+      // If not, fetch all posts for the home page (user's posts + followed users' posts)
+      const url = userId ? `/posts?userId=${userId}` : "/posts";
+      const response = await makeRequest.get(url, {
         withCredentials: true  // This ensures cookies are sent with the request
       });
       return response.data;
