@@ -17,10 +17,13 @@ import { makeRequest } from "../../axios";
 import { useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
+import Edit from "../../components/edit/edit";
+import { useState } from "react";
 
 const Profile = () => {
 
   const { currentUser } = useContext(AuthContext);
+  const [openEdit, setOpenEdit] = useState(false);
 
  // extracts the userId from the URL pathname using the useLocation hook
   const userId = parseInt(useLocation().pathname.split("/")[2]);
@@ -119,9 +122,7 @@ const Profile = () => {
                   "loading"
                 ) : (
               userId === currentUser.id ? (
-                <a href="/editprofile">
-                  <button>Edit Profile</button>
-                </a>
+                  <button onClick={() => setOpenEdit(true)}>Edit Profile</button>
               ) : <button onClick={handleFollow}>{relationshipData.includes(currentUser.id)
                 ? "Following"
                 : "Follow"}</button>
@@ -136,6 +137,7 @@ const Profile = () => {
         </div>
         </>
       )}
+      {openEdit && <Edit setOpenEdit={setOpenEdit} />}
     </div>
   );
 };

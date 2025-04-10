@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { makeRequest } from "../../axios";
-import "./update.scss";
+import "./edit.scss";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-const Update = ({ setOpenUpdate, user }) => {
+const Edit = ({ setOpenEdit, user }) => {
   const [cover, setCover] = useState(null);
   const [profile, setProfile] = useState(null);
   const [texts, setTexts] = useState({
@@ -56,14 +56,14 @@ const Update = ({ setOpenUpdate, user }) => {
     profileUrl = profile ? await upload(profile) : user.profilePic;
     
     mutation.mutate({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
-    setOpenUpdate(false);
+    setOpenEdit(false);
     setCover(null);
     setProfile(null);
 
   return (
-    <div className="update">
+    <div className="edit">
       <div className="wrapper">
-        <h1>Update Your Profile</h1>
+        <h1>Edit Your Profile</h1>
         <form>
           <div className="files">
             <label htmlFor="cover">
@@ -142,14 +142,14 @@ const Update = ({ setOpenUpdate, user }) => {
             value={texts.website}
             onChange={handleChange}
           />
-          <button onClick={handleClick}>Update</button>
+          <button onClick={handleClick}>edit</button>
         </form>
-        <button className="close" onClick={() => setOpenUpdate(false)}>
+        <button className="close" onClick={() => setOpenEdit(false)}>
           close
         </button>
       </div>
     </div>
   );
 };
-
-export default Update;
+};
+export default Edit;
