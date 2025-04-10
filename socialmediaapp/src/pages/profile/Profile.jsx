@@ -14,6 +14,8 @@ import post2 from '../../images/comic-book-lifestyle-scene-with-friends_23-21511
 import post3 from '../../images/side-view-anime-style-man-portrait.jpg';
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
+import { useLocation } from "react-router-dom";
+import PlatformIcon from "../../components/PlatformIcon/PlatformIcon";
 
 const Profile = () => {
 
@@ -22,21 +24,30 @@ const Profile = () => {
 
 
  // uses useQuery hook to fetch user data from the server
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["user"],
+  const { isLoading: userLoading, error, data: userData } = useQuery({
+    queryKey: ["user", userId],
     queryFn: () => makeRequest.get(`/users/find/ + userId`).then(res => res.data),
   });
+
+  //fetch user platforms
+   const { isLoading: platformsLoading, data: platforms } = useQuery({
+    queryKey: ["platforms", userId],
+    queryFn: () => makeRequest.get(`/platforms?userId=${userId}`).then(res => res.data),
+  });
+
+  if (userLoading || platformsLoading) return "Loading...";
+ 
 
   return (
     <div className="profile">
       <div className="images">
         <img
-          src= {post2}
+          src= {userData.coverPic}
           alt=""
           className="cover"
         />
         <img
-          src={post1}
+          src={userData.profilePic}
           alt=""
           className="profilePic"
         />
@@ -61,15 +72,26 @@ const Profile = () => {
             </a>
           </div>
           <div className="center">
-            <span>Tife Mayo</span>
+            <span>{userData.name}</span>
             <div className="info">
               <div className="item">
                 <PlaceIcon />
-                <span>UK</span>
+                <span>lagos</span>
               </div>
               <div className="item">
                 <LanguageIcon />
-                <span> www/tifemayo.com</span>
+                <span>tife.mayo.com</span>
+              </div>
+              <div className="platforms">
+                <h3>Connected Platforms</h3>
+                <div className="platform-list">
+                  {platforms?.map((platform) => (
+                    <div key={platform} className="platform-item">
+                      <PlatformIcon platform={platform} />
+                      <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             <button>follow</button>
