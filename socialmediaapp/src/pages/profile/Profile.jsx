@@ -137,7 +137,7 @@ const Profile = () => {
         </div>
         </>
       )}
-      {openEdit && <Edit setOpenEdit={setOpenEdit}/>}
+      {openEdit && <Edit setOpenEdit={setOpenEdit} user={userData}/>}
     </div>
   );
 };
