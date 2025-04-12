@@ -5,13 +5,12 @@ import Map from "../../assets/map.png";
 import Friend from "../../assets/friend.png";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/authContext";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import PlatformIcon from "../PlatformIcon/PlatformIcon";
 import axios from "axios";
 
 const Share = () => {
-
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
@@ -19,6 +18,20 @@ const Share = () => {
   const [showPlatformSelect, setShowPlatformSelect] = useState(false);
   const {currentUser} = useContext(AuthContext);
   const [mediaType, setMediaType] = useState(null);
+
+  // Fetch latest user data to ensure we have updated profile picture
+  const { data: userData } = useQuery({
+    queryKey: ["user", currentUser.id],
+    queryFn: () => makeRequest.get(`/users/find/${currentUser.id}`).then(res => res.data)
+  });
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "/images/default-profile.jpg";
+    if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
+      return imagePath;
+    }
+    return "/upload/" + imagePath;
+  };
 
   const handlePlatformClick = () => {
     console.log("Platform button clicked"); // Debug log
@@ -50,7 +63,6 @@ const Share = () => {
     }
   };
 
- 
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -58,10 +70,10 @@ const Share = () => {
       return makeRequest.post("/posts", newPost);
     },
     onSuccess: () => {
-        // Invalidate and refetch
-        queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
+
   const handlePlatformToggle = (platform) => {
     setSelectedPlatforms(prev => 
       prev.includes(platform)
@@ -69,18 +81,18 @@ const Share = () => {
         : [...prev, platform]
     );
   };
+
   //Handles the preview of changing media files and setting the media type based on file extension
-  const handleMediaChange= (e) => {
+  const handleMediaChange = (e) => {
     const media = e.target.files[0];
     if (media) {
       if (file) {
         URL.revokeObjectURL(URL.createObjectURL(file));
       }
-      const type = media.type.split('/')[0]; // checks media type starts with 'image' or 'video' OR media.type.startsWith('image') ? 'image' : 'video'
+      const type = media.type.split('/')[0];
       setFile(media);
       setMediaType(type);
     }
-    
   };
 
   const handleDeletePreview = () => {
@@ -96,7 +108,6 @@ const Share = () => {
     e.preventDefault();
     let mediaUrl = "";
     if (file) mediaUrl = await upload();
-    // Create a post for each selected platform
     for (const platform of selectedPlatforms) {
       const postData = {
         desc,
@@ -104,18 +115,17 @@ const Share = () => {
         mediaType: mediaType,
         platform
       };
-      console.log("Creating post for platform:", postData); // Debug log
       mutation.mutate(postData);
     }
-    
-
     setDesc("");
     setFile(null);
     setMediaType(null);
     setSelectedPlatforms([]);
     setShowPlatformSelect(false);
   };
- 
+
+  // Use userData if available, otherwise fall back to currentUser
+  const displayUser = userData || currentUser;
 
   return (
     <div className="share">
@@ -123,30 +133,32 @@ const Share = () => {
         <div className="top">
           <div className="left">
             <img
-              src={currentUser.profilePic}
+              src={getImageUrl(displayUser?.profilePic)}
               alt=""
             />
-            <input type="text" placeholder={`What's on your mind ${currentUser.name}?`} onChange={(e) => setDesc(e.target.value)}  value={desc} />
+            <input 
+              type="text" 
+              placeholder={`What's on your mind ${displayUser?.name}?`} 
+              onChange={(e) => setDesc(e.target.value)}  
+              value={desc} 
+            />
           </div>
           <div className="right">
           {file && (
             <>
-            {mediaType === 'image' ? (
-              <img className="file" alt="" src={URL.createObjectURL(file)} />
-            ) : mediaType === 'video' ? (
-              <video className="file" controls width="100%" preload="metadata">
-                <source src={URL.createObjectURL(file)} type={file.type} />
-                Your browser does not support the video tag.
-              </video>
-            ) : null}
+              {mediaType === 'image' ? (
+                <img className="file" alt="" src={URL.createObjectURL(file)} />
+              ) : mediaType === 'video' ? (
+                <video className="file" controls width="100%" preload="metadata">
+                  <source src={URL.createObjectURL(file)} type={file.type} />
+                  Your browser does not support the video tag.
+                </video>
+              ) : null}
               <span className="cancel" onClick={handleDeletePreview}> x </span>
             </>
-            )}
-            
+          )}
           </div>
         </div>
-   
-        
         <hr />
         <div className="bottom">
           <div className="left">
@@ -170,11 +182,9 @@ const Share = () => {
                 </div>
               ))}
             </div>
-           
-           
           </div>
           <div className="right">
-            <button onClick={handleClick} disabled={!desc || selectedPlatforms.length === 0} >Share</button>
+            <button onClick={handleClick} disabled={!desc || selectedPlatforms.length === 0}>Share</button>
           </div>
         </div>
       </div>
