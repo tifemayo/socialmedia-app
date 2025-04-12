@@ -1,7 +1,10 @@
+import { useState } from "react";
+import { makeRequest } from "../../axios";
 import "./edit.scss";
-import {useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Edit = ({ setOpenEdit, user}) => {
+  const queryClient = useQueryClient();
   const [cover, setCover] = useState(null);
   const [profile, setProfile] = useState(null);
   
@@ -40,7 +43,7 @@ const Edit = ({ setOpenEdit, user}) => {
   const handleChange = (e) => {
     setTexts((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-  const handleClick = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); 
     let coverUrl;
     let profileUrl;
@@ -53,6 +56,7 @@ const Edit = ({ setOpenEdit, user}) => {
     setCover(null);
     setProfile(null);
   }; 
+
   return (
     <div className="edit">
       Edit
