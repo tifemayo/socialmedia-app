@@ -15,10 +15,13 @@ import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
+import EditPlatforms from "../editPlatforms/EditPlatforms";
+import EditIcon from '@mui/icons-material/Edit';
 
 const LeftBar = () => {
     const { currentUser } = useContext(AuthContext);
     const [userPlatforms, setUserPlatforms] = useState([]);
+    const [openEditPlatforms, setOpenEditPlatforms] = useState(false);
 
     // Fetch user data to ensure we have the latest updates
     const { data: userData } = useQuery({
@@ -122,7 +125,14 @@ const LeftBar = () => {
           </div>
           <hr />
           <div className="menu">
-            <span>Your Platforms </span>
+            <div className="platforms-header">
+              <span>Your Platforms</span>
+              <EditIcon 
+                className="edit-icon" 
+                onClick={() => setOpenEditPlatforms(true)}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
             {/* <div className="item">
               <img src={Instagram} alt="" />
               <span>Instagram</span>
@@ -141,6 +151,7 @@ const LeftBar = () => {
           <hr />
           
         </div>
+        {openEditPlatforms && <EditPlatforms setOpenEditPlatforms={setOpenEditPlatforms} />}
       </div>
     );
   };

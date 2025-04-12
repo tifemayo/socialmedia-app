@@ -1,15 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { makeRequest } from "../../axios";
 import "./edit.scss";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
+import Instagram from "../../assets/instagram.png";
+import TikTok from "../../assets/tik-tok.png";
+import Puzzle from "../../assets/puzzle.png";
+
+const platforms = [
+  { id: "instagram", name: "Instagram", image: Instagram },
+  { id: "tiktok", name: "TikTok", image: TikTok },
+  { id: "unifeed", name: "Unifeed (Default)", image: Puzzle }
+];
 
 const Edit = ({ setOpenEdit, user}) => {
   const queryClient = useQueryClient();
   const { currentUser, updateUser } = useContext(AuthContext);
   const [cover, setCover] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [selectedPlatforms, setSelectedPlatforms] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   
   const [texts, setTexts] = useState({
     email: user?.email || "",
@@ -17,11 +29,31 @@ const Edit = ({ setOpenEdit, user}) => {
     name: user?.name || "",
     username: user?.username || "",
     city: user?.city || "",
-    platform: user?.platform || "",
   });
 
+  // Fetch user's connected platforms
+  const { data: userPlatforms, isLoading: userPlatformsLoading } = useQuery({
+    queryKey: ["userPlatforms", user.id],
+    queryFn: async () => {
+      try {
+        const response = await makeRequest.get(`/platforms?userId=${user.id}`);
+        console.log("User platforms response:", response.data); // Debug log
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching user platforms:", error);
+        throw error;
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (userPlatforms) {
+      console.log("Setting selected platforms:", userPlatforms); // Debug log
+      setSelectedPlatforms(userPlatforms);
+    }
+  }, [userPlatforms]);
+
   const upload = async (file) => {
-    console.log(file)
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -46,7 +78,6 @@ const Edit = ({ setOpenEdit, user}) => {
         profilePic: data.profilePic,
         coverPic: data.coverPic
       });
-      // Invalidate and refetch
       queryClient.invalidateQueries(["user"]);
     }
   });
@@ -55,19 +86,66 @@ const Edit = ({ setOpenEdit, user}) => {
     setTexts((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const handlePlatformToggle = async (platformId) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      if (selectedPlatforms.includes(platformId)) {
+        // Disconnect the platform 
+        await makeRequest.put(`/platforms`, { 
+          userId: user.id,
+          platforms: selectedPlatforms.filter(p => p !== platformId)
+        });
+        setSelectedPlatforms(prev => prev.filter(id => id !== platformId));
+      } else {
+        // Connect platform
+        await makeRequest.put(`/platforms`, { 
+          userId: user.id,
+          platforms: [...selectedPlatforms, platformId]
+        });
+        setSelectedPlatforms(prev => [...prev, platformId]);
+      }
+
+      // Invalidate the platforms query to refresh the data
+      queryClient.invalidateQueries(["userPlatforms"]);
+    } catch (err) {
+      console.error("Error toggling platform:", err);
+      setError("Failed to update platform connection. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-    let coverUrl;
-    let profileUrl;
-    
-    coverUrl = cover ? await upload(cover) : user.coverPic;
-    profileUrl = profile ? await upload(profile) : user.profilePic;
-    
-    mutation.mutate({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
-    setOpenEdit(false);
-    setCover(null);
-    setProfile(null);
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Update the profile
+      let coverUrl;
+      let profileUrl;
+      
+      coverUrl = cover ? await upload(cover) : user.coverPic;
+      profileUrl = profile ? await upload(profile) : user.profilePic;
+      
+      await mutation.mutateAsync({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
+      
+      setOpenEdit(false);
+      setCover(null);
+      setProfile(null);
+    } catch (err) {
+      console.error("Error saving changes:", err);
+      setError(err.response?.data?.message || "Failed to save changes. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }; 
+
+  if (userPlatformsLoading) {
+    return <div className="edit">Loading platforms...</div>;
+  }
 
   return (
     <div className="edit">
@@ -127,14 +205,40 @@ const Edit = ({ setOpenEdit, user}) => {
             onChange={handleChange}
             value={texts.city}
           />
-          <label>Platform</label>
-          <input 
-            type="text" 
-            name="platform" 
-            onChange={handleChange}
-            value={texts.platform}
-          />
-          <button onClick={handleSubmit}>Save Changes</button>
+          <div className="platforms-section">
+            <h3>Platforms</h3>
+            {error && <div className="error-message">{error}</div>}
+            <div className="platform-grid">
+              {platforms.map((platform) => {
+                const isConnected = selectedPlatforms.includes(platform.id);
+                console.log(`Platform ${platform.id} is connected:`, isConnected); // Debug log
+                return (
+                  <button
+                    key={platform.id}
+                    className={`platform-button ${isConnected ? "selected" : ""}`}
+                    onClick={() => handlePlatformToggle(platform.id)}
+                    disabled={loading}
+                  >
+                    <img 
+                      src={platform.image} 
+                      alt={platform.name} 
+                      className="platform-icon"
+                    />
+                    <span className="platform-name">{platform.name}</span>
+                    <span className="platform-status">
+                      {isConnected ? "Connected" : "Connect"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <button 
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save Changes"}
+          </button>
         </form>
         <button className="close" onClick={() => setOpenEdit(false)}>X</button>
       </div>

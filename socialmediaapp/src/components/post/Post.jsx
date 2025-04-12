@@ -4,6 +4,7 @@ import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Link, useNavigate } from "react-router-dom";
 import Comments from "../comments/Comments";
 import PlatformIcon from "../PlatformIcon/PlatformIcon";
@@ -14,9 +15,9 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import moment from "moment";
 
-
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -26,7 +27,6 @@ const Post = ({ post }) => {
     queryFn: () => makeRequest.get(`/likes?postId=${post.id}`).then(res => res.data),
   });
 
-  console.log(data)
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -36,20 +36,35 @@ const Post = ({ post }) => {
       }
       return makeRequest.post("/likes", { postId: post.id });
     },
-      onSuccess: () => {
-        // Invalidate and refetch
-        queryClient.invalidateQueries(["likes"]);
-      },
-    
-});
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries(["likes"]);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (postId) => {
+      return makeRequest.delete("/posts/" + postId);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries(["posts"]);
+    },
+  });
+
   const handleLike = () => {
     mutation.mutate(data.includes(currentUser.id));
   };
 
   const handleProfileClick = (userId) => {
-    // Navigate to profile and scroll to top
     navigate(`/profile/${userId}`);
     window.scrollTo(0, 0);
+  };
+
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      deleteMutation.mutate(post.id);
+    }
   };
 
   return (
@@ -71,7 +86,19 @@ const Post = ({ post }) => {
           </div>
           <div className="icon-container">
             <PlatformIcon platform={post.platform} />
-            <MoreHorizIcon />
+            {post.userId === currentUser.id && (
+              <div className="menu-container">
+                <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)}/>
+                {menuOpen && (
+                  <div className="menu-dropdown">
+                    <button className="delete-button" onClick={handleDelete}>
+                      <DeleteOutlineIcon className="delete-icon" />
+                      <span>Delete Post</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div className="content">
