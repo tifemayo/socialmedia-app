@@ -7,27 +7,26 @@ import PlatformIcon from "../PlatformIcon/PlatformIcon";
 import { AuthContext } from "../../context/authContext";
 import { useContext, useState, useEffect } from "react";
 
-
 const Posts = ({userId}) => {
 
   //Functionality to filter posts by platforms 
   const { currentUser } = useContext(AuthContext);
-  const [selectedPlatforms, setSelectedPlatforms] = useState([])
+  const [selectedPlatforms, setSelectedPlatforms] = useState([]);
   const [userPlatforms, setUserPlatforms] = useState([]);
 
 
-  // query to Fetch / get a socialmedia user's integrated platforms , using current userID from local storage 
+  // query to Fetch/get a socialmedia user's integrated platforms , using current userID from local storage 
   useEffect(() => {
     const fetchUserPlatforms = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8800/api/platforms?userId=${currentUser.id}`, {
-                withCredentials: true
-            });
-            console.log("Fetched platforms:", response.data);
-            setUserPlatforms(response.data);
-        } catch (error) {
-            console.error("Error fetching user platforms:", error);
-        }
+      try {
+        const response = await makeRequest.get(`/platforms?userId=${currentUser.id}`);
+        console.log("Fetched platforms:", response.data);
+        setUserPlatforms(response.data);
+        // Initially set selected platforms to all user platforms
+        setSelectedPlatforms(response.data);
+      } catch (error) {
+        console.error("Error fetching user platforms:", error);
+      }
     };
     if (currentUser?.id) { // Only fetch if we have a user ID
       fetchUserPlatforms();
@@ -53,35 +52,47 @@ const Posts = ({userId}) => {
   // This main filter functionality helps to handle filtering post with one or more platforms based on selected plaftform buttons
   const handlePlatformClick = (platform) => {
     if (platform === "all") {
-      setSelectedPlatforms([]);
-    } else if (selectedPlatforms.includes(platform)) {
-      setSelectedPlatforms(selectedPlatforms.filter(p => p !== platform));
+      setSelectedPlatforms(userPlatforms); // Show all user's platforms
     } else {
-      setSelectedPlatforms([...selectedPlatforms, platform]);
+      if (selectedPlatforms.includes(platform)) {
+        // Don't allow deselecting if it's the last selected platform
+        if (selectedPlatforms.length > 1) {
+          setSelectedPlatforms(prev => prev.filter(p => p !== platform));
+        }
+      } else {
+        setSelectedPlatforms(prev => [...prev, platform]);
+      }
     }
   };
 
- 
-  const filterPosts = selectedPlatforms.length === 0
-  ? data 
-  : data?.filter(post => selectedPlatforms.includes(post.platform ));
+  // Filter posts based on selected platforms
+  const filteredPosts = data?.filter(post => selectedPlatforms.includes(post.platform)) || [];
 
+  if (!userPlatforms.length) {
+    return (
+      <div className="postcontainer">
+        <div className="no-platforms-message">
+          Please connect to at least one platform to see posts.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="postcontainer">
       <div className="platformFilter">
-   
-          <button
-            onClick={() =>  handlePlatformClick("all")}
-            className={`button ${selectedPlatforms.length === 0 ? "active" : ""}`}
-          >
-            <span>All Platforms</span>
-          </button>
-          {userPlatforms.map((platform) => (
+        <button
+          onClick={() => handlePlatformClick("all")}
+          className={`button ${selectedPlatforms.length === userPlatforms.length ? "active" : ""}`}
+        >
+          <span>All Platforms</span>
+        </button>
+        {userPlatforms.map((platform) => (
           <button
             key={platform}
             onClick={() => handlePlatformClick(platform)}
             className={`button ${selectedPlatforms.includes(platform) ? "active" : ""}`}
+            disabled={selectedPlatforms.length === 1 && selectedPlatforms.includes(platform)}
           >
             <PlatformIcon platform={platform} />
             <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
@@ -92,17 +103,20 @@ const Posts = ({userId}) => {
 
       </div>
 
-    
       <div className="posts">
-        
-        {error
-          ? "Something went wrong!"
-          : isLoading
-          ? "loading"
-          : filterPosts?.map((posts) => <Post post={posts} key={posts.id} />)}
+      {error ? (
+          "Something went wrong!"
+        ) : isLoading ? (
+          "Loading..."
+        ) : filteredPosts.length === 0 ? (
+          <div className="no-posts-message">
+            No posts available for the selected platforms.
+          </div>
+        ) : (
+          filteredPosts.map((post) => <Post post={post} key={post.id} />)
+        )}
       </div>
     </div>
-  
   );
 };
 
