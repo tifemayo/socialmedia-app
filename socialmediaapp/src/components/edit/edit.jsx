@@ -92,19 +92,24 @@ const Edit = ({ setOpenEdit, user}) => {
       setError(null);
 
       if (selectedPlatforms.includes(platformId)) {
-        // Disconnect the platform 
-        await makeRequest.put(`/platforms`, { 
-          userId: user.id,
-          platforms: selectedPlatforms.filter(p => p !== platformId)
+        // Disconnect the platform using DELETE endpoint
+        const response = await makeRequest.delete(`/platforms`, {
+          data: { 
+            userId: user.id,
+            platformId
+          }
         });
-        setSelectedPlatforms(prev => prev.filter(id => id !== platformId));
+        // Backend now returns the updated platforms list
+        setSelectedPlatforms(response.data);
       } else {
-        // Connect platform
-        await makeRequest.put(`/platforms`, { 
+        // Connect platform using PUT endpoint
+        const updatedPlatforms = [...selectedPlatforms, platformId];
+        const response = await makeRequest.put(`/platforms`, { 
           userId: user.id,
-          platforms: [...selectedPlatforms, platformId]
+          platforms: updatedPlatforms
         });
-        setSelectedPlatforms(prev => [...prev, platformId]);
+        // Backend now returns the updated platforms list
+        setSelectedPlatforms(response.data);
       }
 
       // Invalidate the platforms query to refresh the data

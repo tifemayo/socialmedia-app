@@ -22,19 +22,26 @@ import Edit from "../../components/edit/edit";
 const Profile = () => {
   const [openEdit, setOpenEdit] = useState(false);
   const { currentUser } = useContext(AuthContext);
+ 
 
+ // extracts the userId from the URL pathname using the useLocation hook
   const userId = parseInt(useLocation().pathname.split("/")[2]);
   const queryClient = useQueryClient();
-
+ 
+ // uses useQuery hook to fetch user data 
   const { isLoading: userLoading, error, data: userData } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => makeRequest.get(`/users/find/${userId}`).then(res => res.data),
   });
 
+  // // uses to fetch followers from backend DB
   const { isLoading: relationshipLoading, data: relationshipData } = useQuery({
     queryKey: ["relationship", userId],
     queryFn: () => makeRequest.get(`/relationships?followedUserId=${userId}`).then(res => res.data),
   });
+  console.log(relationshipData);
+
+  // mutation to follow a user
 
   const mutation = useMutation({
     mutationFn: (following) => {
@@ -47,11 +54,13 @@ const Profile = () => {
     },
   });
 
+  //function to handle follow user request
   const handleFollow = async () => {
     mutation.mutate(relationshipData.includes(currentUser.id));
   };
-
-  if (userLoading) return "Loading...";
+  
+  // query to Fetch / get a socialmedia user's integrated platforms , using current userID from local storage 
+  if (userLoading ) return "Loading...";
   if (error) return "Error loading profile";
   if (!userData) return "No user data found";
 
