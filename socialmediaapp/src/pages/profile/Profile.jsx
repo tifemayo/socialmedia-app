@@ -21,9 +21,9 @@ import Edit from "../../components/edit/edit";
 import { useState } from "react";
 
 const Profile = () => {
-
-  const { currentUser } = useContext(AuthContext);
   const [openEdit, setOpenEdit] = useState(false);
+  const { currentUser } = useContext(AuthContext);
+ 
 
  // extracts the userId from the URL pathname using the useLocation hook
   const userId = parseInt(useLocation().pathname.split("/")[2]);
@@ -137,7 +137,7 @@ const Profile = () => {
         </div>
         </>
       )}
-      {openEdit && <Edit setOpenEdit={setOpenEdit} />}
+      {openEdit && <Edit setOpenEdit={setOpenEdit}/>}
     </div>
   );
 };
