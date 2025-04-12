@@ -57,7 +57,7 @@ const Post = ({ post }) => {
       <div className="container">
         <div className="user">
           <div className="userInfo">
-            <img src={post.profilePic} alt="" />
+            <img src={"/upload/" + post.profilePic} alt="" />
             <div className="details">
               <span 
                 className="name" 
@@ -70,11 +70,9 @@ const Post = ({ post }) => {
             </div>
           </div>
           <div className="icon-container">
-            {/* <img src={Instagram} alt="" /> */}
             <PlatformIcon platform={post.platform} />
             <MoreHorizIcon />
           </div>
-
         </div>
         <div className="content">
           <p>{post.desc}</p>
@@ -90,11 +88,9 @@ const Post = ({ post }) => {
               )}
             </div>
           )}
-          {/* {post.img && <img src={`http://localhost:8800/upload/${post.img}`} alt="" />} */}
         </div>
         <div className="info">
           <div className="item">
-            {/* Liked functionality */}
             {isLoading ? (
               "loading"
             ) : data.includes(currentUser.id) ? (
@@ -105,19 +101,18 @@ const Post = ({ post }) => {
             ) : (
               <FavoriteBorderOutlinedIcon onClick={handleLike} />
             )}
-            {data?.length} Likes
+            {data?.length} likes
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
-            {/* revisit to show number of comments  */}
-            Comments
+            See comments
           </div>
           <div className="item">
             <ShareOutlinedIcon />
             Share
           </div>
         </div>
-        {commentOpen && <Comments postId={post.id}/>}
+        {commentOpen && <Comments postId={post.id} />}
       </div>
     </div>
   );

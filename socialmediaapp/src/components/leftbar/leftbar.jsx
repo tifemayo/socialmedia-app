@@ -13,10 +13,30 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import { AuthContext } from "../../context/authContext";
 import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { makeRequest } from "../../axios";
 
 const LeftBar = () => {
     const { currentUser } = useContext(AuthContext);
     const [userPlatforms, setUserPlatforms] = useState([]);
+
+    // Fetch user data to ensure we have the latest updates
+    const { data: userData } = useQuery({
+        queryKey: ["user", currentUser.id],
+        queryFn: () => makeRequest.get(`/users/find/${currentUser.id}`).then(res => res.data),
+        enabled: !!currentUser.id
+    });
+
+    // Helper function to determine if an image needs the /upload/ prefix
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return "";
+        // If the path already starts with http or /, return as is
+        if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
+            return imagePath;
+        }
+        // Otherwise, add the /upload/ prefix
+        return "/upload/" + imagePath;
+    };
 
     useEffect(() => {
       const fetchUserPlatforms = async () => {
@@ -49,22 +69,25 @@ const LeftBar = () => {
         }
     };
 
+    // Use userData if available, otherwise fall back to currentUser
+    const displayUser = userData || currentUser;
+
     return (
       <div className="leftBar">
         <div className="container">
           <div className="menu">
-            <Link to={`/profile/${currentUser.id}`} style={{textDecoration:"none"}}>
+            <Link to={`/profile/${displayUser.id}`} style={{textDecoration:"none"}}>
                 <div className="user">
                 <img
-                    src={currentUser.profilePic}
+                    src={getImageUrl(displayUser.profilePic)}
                     alt=""
                 />
-                <span>{currentUser.username}</span>
+                <span>{displayUser.username}</span>
                 </div>
             </Link>
             <div className="item">
                 <PeopleIcon/>
-            {/* <img src={following} alt="" /> */}
+              {/* <img src={following} alt="" /> */}
               <span>Following</span>
             </div>
             <div className="item">

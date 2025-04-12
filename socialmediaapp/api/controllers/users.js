@@ -27,16 +27,24 @@ export const updateUser = (req, res) => {
       q,
       [
         req.body.name,
-        req.body.coverPic,
         req.body.profilePic,
+        req.body.coverPic,
         userInfo.id,
       ],
       (err, data) => {
         if (err) res.status(500).json(err);
-        if (data.affectedRows > 0) return res.json("Profile Updated");
-        return res.status(403).json("You can update only your post!");
+        if (data.affectedRows > 0) {
+          // Fetch and return the updated user data
+          const selectQ = "SELECT * FROM users WHERE id=?";
+          db.query(selectQ, [userInfo.id], (err, data) => {
+            if (err) return res.status(500).json(err);
+            const { password, ...info } = data[0];
+            return res.json(info);
+          });
+        } else {
+          return res.status(403).json("You can update only your post!");
+        }
       }
     );
   });
-
 }

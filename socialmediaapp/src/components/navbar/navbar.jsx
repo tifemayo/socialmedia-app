@@ -13,11 +13,33 @@ import profileImg from '../../images/girl-afro (1).jpg';
 import { useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
-
+import { useQuery } from "@tanstack/react-query";
+import { makeRequest } from "../../axios";
 
 const NavBar = () => {
     const { toggle, darkMode } = useContext(DarkModeContext);
     const { currentUser } = useContext(AuthContext);
+
+    // Fetch user data to ensure we have the latest updates
+    const { data: userData } = useQuery({
+        queryKey: ["user", currentUser.id],
+        queryFn: () => makeRequest.get(`/users/find/${currentUser.id}`).then(res => res.data),
+        enabled: !!currentUser.id
+    });
+
+    // if an image needs the /upload/ prefix
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return "";
+        // If the path already starts with http or /, return as is
+        if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
+            return imagePath;
+        }
+        // Otherwise, add the /upload/ prefix
+        return "/upload/" + imagePath;
+    };
+
+    // Use userData if available, otherwise fall back to currentUser
+    const displayUser = userData || currentUser;
 
     return(
         <div className="navbar"> 
@@ -46,8 +68,8 @@ const NavBar = () => {
                 <ChatBubbleRoundedIcon/>
                 <NotificationsOutlinedIcon/>
                 <div className="user">
-                    <img src={currentUser.profilePic} alt="" />
-                    <span>{currentUser.name}</span>
+                    <img src={getImageUrl(displayUser.profilePic)} alt="" />
+                    <span>{displayUser.name}</span>
                 </div>
             </div>
         </div>
