@@ -2,6 +2,7 @@ import React from 'react';
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import PlatformSelection from "./pages/platforms/PlatformSelection";
+import SearchPage from "./pages/search/SearchPage";
 
 import {
   createBrowserRouter,
@@ -76,7 +77,11 @@ function App() {
         {
           path:"/profile/:id",
           element:<Profile />
-        }, 
+        },
+        {
+          path:"/search",
+          element:<SearchPage />
+        },
       ]
     },
     {
