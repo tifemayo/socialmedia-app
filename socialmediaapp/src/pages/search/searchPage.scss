@@ -6,6 +6,7 @@
     background-color: themed("bgSoft");
     min-height: calc(100vh - 70px);
     color: themed("textColor");
+    width: 100%;
 
     .search-header {
       margin-bottom: 20px;
@@ -41,10 +42,34 @@
       color: #e74c3c;
     }
 
+    .search-results-container {
+      width: 100%;
+    }
+
     .search-results {
       display: flex;
       flex-direction: column;
       gap: 20px;
+      width: 100%;
+      
+      @media (min-width: 768px) {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+      
+      @media (min-width: 1024px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      @media (min-width: 1440px) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .search-result-item {
+        width: 100%;
+        height: 100%;
+      }
     }
 
     @include mobile {
@@ -54,6 +79,11 @@
         h2 {
           font-size: 20px;
         }
+      }
+      
+      .search-results {
+        display: flex;
+        flex-direction: column;
       }
     }
   }

@@ -65,10 +65,14 @@ const SearchPage = () => {
         <h2>Search results for: "{searchQuery}"</h2>
         <p>{searchResults.length} posts found</p>
       </div>
-      <div className="search-results">
-        {searchResults.map(post => (
-          <Post post={post} key={post.id} />
-        ))}
+      <div className="search-results-container">
+        <div className="search-results">
+          {searchResults.map(post => (
+            <div className="search-result-item" key={post.id}>
+              <Post post={post} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
