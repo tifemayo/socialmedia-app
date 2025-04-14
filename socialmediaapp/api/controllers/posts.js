@@ -99,3 +99,54 @@ export const deletePost = (req, res) => {
     });
   });
 };
+
+// Add search posts function
+export const searchPosts = (req, res) => {
+  const searchQuery = req.query.q;
+  
+  if (!searchQuery || searchQuery.trim() === '') {
+    return res.status(200).json([]);
+  }
+
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Not logged in!");
+
+  jwt.verify(token, "secretkey", (err, userInfo) => {
+    if (err) return res.status(403).json("Token is not valid!");
+
+    // Get user's platforms
+    const platformsQuery = "SELECT platform_name FROM user_platforms WHERE user_id = ?";
+    db.query(platformsQuery, [userInfo.id], (platformErr, platformData) => {
+      if (platformErr) return res.status(500).json(platformErr);
+      
+      const userPlatforms = platformData.map(row => row.platform_name);
+      
+      if (userPlatforms.length === 0) {
+        return res.status(200).json([]);
+      }
+
+      // Build the platform filter condition
+      const platformCondition = userPlatforms.map(() => "p.platform = ?").join(" OR ");
+
+      // Search in post description and user name
+      const searchTerm = `%${searchQuery}%`;
+      
+      const q = `
+        SELECT p.*, u.id AS userId, u.name, u.profilePic 
+        FROM posts AS p 
+        JOIN users AS u ON (u.id = p.userId) 
+        WHERE (p.desc LIKE ? OR u.name LIKE ?) 
+        AND (${platformCondition})
+        ORDER BY p.createdAt DESC
+        LIMIT 50
+      `;
+
+      const values = [searchTerm, searchTerm, ...userPlatforms];
+
+      db.query(q, values, (err, data) => {
+        if (err) return res.status(500).json(err);
+        return res.status(200).json(data);
+      });
+    });
+  });
+};
