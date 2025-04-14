@@ -1,6 +1,7 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
 import moment from "moment";
+import { preprocessText, calculateTfIdf, clusterDocuments, getRecommendations } from "../util/textProcessing.js";
 
 
 export const getPosts = (req, res) => {
@@ -100,7 +101,7 @@ export const deletePost = (req, res) => {
   });
 };
 
-// Add search posts function
+// Enhanced search posts function with intelligence features
 export const searchPosts = (req, res) => {
   const searchQuery = req.query.q;
   
@@ -145,7 +146,70 @@ export const searchPosts = (req, res) => {
 
       db.query(q, values, (err, data) => {
         if (err) return res.status(500).json(err);
-        return res.status(200).json(data);
+        
+        // If no results, return empty array
+        if (data.length === 0) {
+          return res.status(200).json([]);
+        }
+        
+        try {
+          // Apply TF-IDF for relevance scoring
+          const tfidf = calculateTfIdf(data);
+          const searchTerms = preprocessText(searchQuery);
+          
+          // Score each post based on TF-IDF relevance to search query
+          const scoredPosts = data.map((post, index) => {
+            let relevanceScore = 0;
+            
+            searchTerms.forEach(term => {
+              relevanceScore += tfidf.tfidf(term, index);
+            });
+            
+            return {
+              ...post,
+              relevanceScore: relevanceScore || 0.1 // Ensure minimum score
+            };
+          });
+          
+          // Sort by relevance score
+          scoredPosts.sort((a, b) => b.relevanceScore - a.relevanceScore);
+          
+          // Apply clustering to identify topics
+          clusterDocuments(scoredPosts).then(clusteredPosts => {
+            // Get recommendations for the top post
+            let recommendations = [];
+            if (clusteredPosts.length > 0) {
+              recommendations = getRecommendations(clusteredPosts[0], data);
+            }
+            
+            // Return search results with metadata
+            return res.status(200).json({
+              results: clusteredPosts,
+              recommendations,
+              searchMetadata: {
+                query: searchQuery,
+                totalResults: clusteredPosts.length,
+                processingTime: new Date().getTime()
+              }
+            });
+          }).catch(clusterErr => {
+            console.error("Clustering error:", clusterErr);
+            // Fallback to just returning scored posts if clustering fails
+            return res.status(200).json({
+              results: scoredPosts,
+              recommendations: [],
+              searchMetadata: {
+                query: searchQuery,
+                totalResults: scoredPosts.length,
+                processingTime: new Date().getTime()
+              }
+            });
+          });
+        } catch (processingErr) {
+          console.error("Text processing error:", processingErr);
+          // Fallback to returning original results if text processing fails
+          return res.status(200).json(data);
+        }
       });
     });
   });
