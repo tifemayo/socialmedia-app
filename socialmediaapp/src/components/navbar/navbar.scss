@@ -66,13 +66,27 @@
         gap: 10px;
         border: 1px solid themed("border");
         border-radius: 5px;
-        padding: 5px;
+        padding: 5px 10px;
+        position: relative;
+
+        form {
+          display: flex;
+          align-items: center;
+          width: 100%;
+        }
 
         input {
           border: none;
           width: 500px;
           background-color: transparent;
           color: themed("textColor");
+          padding: 8px;
+          flex: 1;
+          font-size: 14px;
+
+          &:focus {
+            outline: none;
+          }
 
           @include mobile{
             display: none;
@@ -82,12 +96,35 @@
             width: 200px;
           }
         }
+
+        .clear-search {
+          cursor: pointer;
+          font-size: 18px;
+          color: themed("textColorSoft");
+          transition: color 0.2s;
+
+          &:hover {
+            color: themed("textColor");
+          }
+        }
+
+        .search-results-container {
+          position: absolute;
+          top: calc(100% + 5px);
+          left: 0;
+          width: 100%;
+          z-index: 1000;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
       }
       .user {
         display: flex;
         align-items: center;
         gap: 10px;
         font-weight: 500;
+        cursor: pointer;
 
         @include tablet{
           display: none;

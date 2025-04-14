@@ -21,7 +21,7 @@ import SearchResults from "../searchResults/SearchResults";
 const NavBar = () => {
     const { toggle, darkMode } = useContext(DarkModeContext);
     const { currentUser } = useContext(AuthContext);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
     const [showResults, setShowResults] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
     const navigate = useNavigate();
@@ -41,11 +41,11 @@ const NavBar = () => {
     // Debounce search query to prevent excessive API calls
     useEffect(() => {
         const timer = setTimeout(() => {
-            setDebouncedQuery(searchQuery);
+            setDebouncedQuery(searchTerm);
         }, 500); // 500ms delay
 
         return () => clearTimeout(timer);
-    }, [searchQuery]);
+    }, [searchTerm]);
 
     // Get search results when debounced query changes
     const { data: searchResults, isLoading: searchLoading } = useQuery({
@@ -77,14 +77,14 @@ const NavBar = () => {
     // Handle search input change
     const handleSearchChange = (e) => {
         const value = e.target.value;
-        setSearchQuery(value);
+        setSearchTerm(value);
         setShowResults(value.length > 0);
         setIsSearching(value.length > 0);
     };
 
     // Clear search
     const handleClearSearch = () => {
-        setSearchQuery("");
+        setSearchTerm("");
         setShowResults(false);
         setIsSearching(false);
     };
@@ -92,8 +92,8 @@ const NavBar = () => {
     // Handle search submission
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        if (searchQuery.trim().length > 0) {
-            navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+        if (searchTerm.trim().length > 0) {
+            navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
             setShowResults(false);
         }
     };
@@ -137,9 +137,9 @@ const NavBar = () => {
                         <input 
                             type="text" 
                             placeholder="Search posts..." 
-                            value={searchQuery}
+                            value={searchTerm}
                             onChange={handleSearchChange}
-                            onFocus={() => setShowResults(searchQuery.length > 0)}
+                            onFocus={() => setShowResults(searchTerm.length > 0)}
                         />
                         {isSearching && (
                             <CloseIcon 
