@@ -102,6 +102,7 @@ export const deletePost = (req, res) => {
 };
 
 // Enhanced search posts function with intelligence features
+// Inside your searchPosts function, add these logs
 export const searchPosts = (req, res) => {
   const searchQuery = req.query.q;
   
@@ -115,102 +116,81 @@ export const searchPosts = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
-    // Get user's platforms
-    const platformsQuery = "SELECT platform_name FROM user_platforms WHERE user_id = ?";
-    db.query(platformsQuery, [userInfo.id], (platformErr, platformData) => {
-      if (platformErr) return res.status(500).json(platformErr);
+    // Get basic search results first
+    const searchTerm = `%${searchQuery}%`;
+    const q = `
+      SELECT p.*, u.id AS userId, u.name, u.profilePic 
+      FROM posts AS p 
+      JOIN users AS u ON (u.id = p.userId) 
+      WHERE (p.desc LIKE ? OR u.name LIKE ?) 
+      ORDER BY p.createdAt DESC
+      LIMIT 50
+    `;
+
+    db.query(q, [searchTerm, searchTerm], async (err, data) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json(err);
+      }
       
-      const userPlatforms = platformData.map(row => row.platform_name);
-      
-      if (userPlatforms.length === 0) {
+      // If no results, return empty array
+      if (!data || data.length === 0) {
         return res.status(200).json([]);
       }
-
-      // Build the platform filter condition
-      const platformCondition = userPlatforms.map(() => "p.platform = ?").join(" OR ");
-
-      // Search in post description and user name
-      const searchTerm = `%${searchQuery}%`;
       
-      const q = `
-        SELECT p.*, u.id AS userId, u.name, u.profilePic 
-        FROM posts AS p 
-        JOIN users AS u ON (u.id = p.userId) 
-        WHERE (p.desc LIKE ? OR u.name LIKE ?) 
-        AND (${platformCondition})
-        ORDER BY p.createdAt DESC
-        LIMIT 50
-      `;
-
-      const values = [searchTerm, searchTerm, ...userPlatforms];
-
-      db.query(q, values, (err, data) => {
-        if (err) return res.status(500).json(err);
+      try {
+        console.log("Found posts:", data.length);
+        console.log("Applying intelligent search processing...");
         
-        // If no results, return empty array
-        if (data.length === 0) {
-          return res.status(200).json([]);
-        }
+        // Apply TF-IDF for relevance scoring
+        const tfidf = calculateTfIdf(data);
+        const searchTerms = preprocessText(searchQuery);
+        console.log("Search terms:", searchTerms);
         
-        try {
-          // Apply TF-IDF for relevance scoring
-          const tfidf = calculateTfIdf(data);
-          const searchTerms = preprocessText(searchQuery);
+        // Score each post based on TF-IDF relevance to search query
+        const scoredPosts = data.map((post, index) => {
+          let relevanceScore = 0;
           
-          // Score each post based on TF-IDF relevance to search query
-          const scoredPosts = data.map((post, index) => {
-            let relevanceScore = 0;
-            
-            searchTerms.forEach(term => {
-              relevanceScore += tfidf.tfidf(term, index);
-            });
-            
-            return {
-              ...post,
-              relevanceScore: relevanceScore || 0.1 // Ensure minimum score
-            };
+          searchTerms.forEach(term => {
+            const termScore = tfidf.tfidf(term, index);
+            relevanceScore += termScore || 0;
           });
           
-          // Sort by relevance score
-          scoredPosts.sort((a, b) => b.relevanceScore - a.relevanceScore);
-          
-          // Apply clustering to identify topics
-          clusterDocuments(scoredPosts).then(clusteredPosts => {
-            // Get recommendations for the top post
-            let recommendations = [];
-            if (clusteredPosts.length > 0) {
-              recommendations = getRecommendations(clusteredPosts[0], data);
-            }
-            
-            // Return search results with metadata
-            return res.status(200).json({
-              results: clusteredPosts,
-              recommendations,
-              searchMetadata: {
-                query: searchQuery,
-                totalResults: clusteredPosts.length,
-                processingTime: new Date().getTime()
-              }
-            });
-          }).catch(clusterErr => {
-            console.error("Clustering error:", clusterErr);
-            // Fallback to just returning scored posts if clustering fails
-            return res.status(200).json({
-              results: scoredPosts,
-              recommendations: [],
-              searchMetadata: {
-                query: searchQuery,
-                totalResults: scoredPosts.length,
-                processingTime: new Date().getTime()
-              }
-            });
-          });
-        } catch (processingErr) {
-          console.error("Text processing error:", processingErr);
-          // Fallback to returning original results if text processing fails
-          return res.status(200).json(data);
+          return {
+            ...post,
+            relevanceScore: relevanceScore || 0.1 // Ensure minimum score
+          };
+        });
+        
+        // Sort by relevance score
+        scoredPosts.sort((a, b) => b.relevanceScore - a.relevanceScore);
+        
+        // Apply clustering to identify topics
+        const clusteredPosts = await clusterDocuments(scoredPosts);
+        
+        // Get recommendations for the top post
+        let recommendations = [];
+        if (clusteredPosts.length > 0) {
+          recommendations = getRecommendations(clusteredPosts[0], data);
         }
-      });
+        
+        // Return search results with metadata
+        console.log("Sending enhanced search results");
+        return res.status(200).json({
+          results: clusteredPosts,
+          recommendations,
+          searchMetadata: {
+            query: searchQuery,
+            totalResults: clusteredPosts.length,
+            processingTime: new Date().getTime()
+          }
+        });
+      } catch (processingErr) {
+        console.error("Text processing error:", processingErr);
+        console.error(processingErr.stack); // Log the full stack trace
+        // Fallback to returning original results if text processing fails
+        return res.status(200).json(data);
+      }
     });
   });
 };

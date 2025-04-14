@@ -64,33 +64,32 @@ const clusterDocuments = async (documents, k = 5) => {
 };
 
 // Content-based recommendation
-const getRecommendations = (post, allPosts, limit = 5) => {
-  // Simple similarity based on shared words
+// Add this function if it's missing
+const getRecommendations = (post, allPosts, maxRecommendations = 3) => {
+  if (!post || !allPosts || allPosts.length === 0) return [];
+  
+  // Simple content-based recommendation
+  // Find posts with similar content based on shared words
   const postWords = new Set(preprocessText(post.desc));
   
-  return allPosts
-    .filter(p => p.id !== post.id) // Exclude the current post
-    .map(otherPost => {
-      const otherWords = new Set(preprocessText(otherPost.desc));
-      
-      // Calculate Jaccard similarity
-      const intersection = new Set([...postWords].filter(x => otherWords.has(x)));
-      const union = new Set([...postWords, ...otherWords]);
-      
-      const similarity = intersection.size / union.size;
-      
+  // Score other posts based on word overlap
+  const scoredPosts = allPosts
+    .filter(p => p.id !== post.id) // Don't recommend the same post
+    .map(p => {
+      const pWords = preprocessText(p.desc);
+      // Count shared words
+      const sharedWords = pWords.filter(word => postWords.has(word)).length;
       return {
-        ...otherPost,
-        similarity
+        ...p,
+        similarityScore: sharedWords / Math.max(1, pWords.length) // Normalize by post length
       };
     })
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, limit);
+    .filter(p => p.similarityScore > 0) // Only posts with some similarity
+    .sort((a, b) => b.similarityScore - a.similarityScore) // Sort by similarity
+    .slice(0, maxRecommendations); // Take top recommendations
+    
+  return scoredPosts;
 };
 
-module.exports = {
-  preprocessText,
-  calculateTfIdf,
-  clusterDocuments,
-  getRecommendations
-};
+// Make sure to export all functions
+export { preprocessText, calculateTfIdf, clusterDocuments, getRecommendations };
