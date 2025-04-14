@@ -8,17 +8,25 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import ChatBubbleRoundedIcon from '@mui/icons-material/ChatBubbleRounded';
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link } from "react-router-dom";
+import CloseIcon from '@mui/icons-material/Close';
+import { Link, useNavigate } from "react-router-dom";
 import profileImg from '../../images/girl-afro (1).jpg';
-import { useContext } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
+import SearchResults from "../searchResults/SearchResults";
 
 const NavBar = () => {
     const { toggle, darkMode } = useContext(DarkModeContext);
     const { currentUser } = useContext(AuthContext);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [showResults, setShowResults] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
+    const navigate = useNavigate();
+    const searchRef = useRef(null);
+    const searchResultsRef = useRef(null);
 
     // Fetch user data to ensure we have the latest updates
     const { data: userData } = useQuery({
@@ -26,6 +34,69 @@ const NavBar = () => {
         queryFn: () => makeRequest.get(`/users/find/${currentUser.id}`).then(res => res.data),
         enabled: !!currentUser.id
     });
+
+    // Debounced search query
+    const [debouncedQuery, setDebouncedQuery] = useState("");
+
+    // Debounce search query to prevent excessive API calls
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedQuery(searchQuery);
+        }, 500); // 500ms delay
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    // Get search results when debounced query changes
+    const { data: searchResults, isLoading: searchLoading } = useQuery({
+        queryKey: ["search", debouncedQuery],
+        queryFn: () => 
+            debouncedQuery.length > 0 
+                ? makeRequest.get(`/posts/search?q=${debouncedQuery}`).then(res => res.data)
+                : Promise.resolve([]),
+        enabled: !!debouncedQuery && debouncedQuery.length > 2 // Only search when query is at least 3 characters
+    });
+
+    // Close search results when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                searchRef.current && 
+                !searchRef.current.contains(event.target) &&
+                searchResultsRef.current && 
+                !searchResultsRef.current.contains(event.target)
+            ) {
+                setShowResults(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    // Handle search input change
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchQuery(value);
+        setShowResults(value.length > 0);
+        setIsSearching(value.length > 0);
+    };
+
+    // Clear search
+    const handleClearSearch = () => {
+        setSearchQuery("");
+        setShowResults(false);
+        setIsSearching(false);
+    };
+
+    // Handle search submission
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim().length > 0) {
+            navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+            setShowResults(false);
+        }
+    };
 
     // if an image needs the /upload/ prefix
     const getImageUrl = (imagePath) => {
@@ -60,17 +131,43 @@ const NavBar = () => {
                 <WidgetsRoundedIcon />
             </div>   
             <div className="right">
-                <div className="search">
-                    <SearchOutlinedIcon />
-                    <input type="text"  placeholder="Search..."/>
+                <div className="search" ref={searchRef}>
+                    <form onSubmit={handleSearchSubmit}>
+                        <SearchOutlinedIcon />
+                        <input 
+                            type="text" 
+                            placeholder="Search posts..." 
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                            onFocus={() => setShowResults(searchQuery.length > 0)}
+                        />
+                        {isSearching && (
+                            <CloseIcon 
+                                className="clear-search" 
+                                onClick={handleClearSearch} 
+                            />
+                        )}
+                    </form>
+                    {showResults && (
+                        <div className="search-results-container" ref={searchResultsRef}>
+                            <SearchResults 
+                                results={searchResults || []} 
+                                loading={searchLoading} 
+                                query={debouncedQuery}
+                                onResultClick={() => setShowResults(false)}
+                            />
+                        </div>
+                    )}
                 </div>
                 <PersonOutlinedIcon/>
                 <ChatBubbleRoundedIcon/>
                 <NotificationsOutlinedIcon/>
-                <div className="user">
-                    <img src={getImageUrl(displayUser.profilePic)} alt="" />
-                    <span>{displayUser.name}</span>
-                </div>
+                <Link to={`/profile/${currentUser.id}`} style={{textDecoration:"none", color: "inherit"}}>
+                    <div className="user">
+                        <img src={getImageUrl(displayUser.profilePic)} alt="" />
+                        <span>{displayUser.name}</span>
+                    </div>
+                </Link>
             </div>
         </div>
       

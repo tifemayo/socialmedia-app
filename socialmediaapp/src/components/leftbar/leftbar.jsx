@@ -11,7 +11,7 @@ import Unifeed from "../../assets/puzzle.png";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import { AuthContext } from "../../context/authContext";
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import EditPlatforms from "../editPlatforms/EditPlatforms";
@@ -20,6 +20,7 @@ import EditIcon from '@mui/icons-material/Edit';
 const LeftBar = () => {
     const { currentUser } = useContext(AuthContext);
     const [openEditPlatforms, setOpenEditPlatforms] = useState(false);
+    const navigate = useNavigate();
 
     // Fetch user data to ensure we have the latest updates
     const { data: userData } = useQuery({
@@ -63,6 +64,12 @@ const LeftBar = () => {
         }
     };
 
+    // Function to handle profile navigation with scroll to top
+    const handleProfileClick = (userId) => {
+        window.scrollTo(0, 0);
+        navigate(`/profile/${userId}`);
+    };
+
     // Use userData if available, otherwise fall back to currentUser
     const displayUser = userData || currentUser;
 
@@ -70,15 +77,17 @@ const LeftBar = () => {
         <div className="leftBar">
             <div className="container">
                 <div className="menu">
-                    <Link to={`/profile/${displayUser.id}`} style={{textDecoration:"none"}}>
-                        <div className="user">
-                            <img
-                                src={getImageUrl(displayUser.profilePic)}
-                                alt=""
-                            />
-                            <span>{displayUser.username}</span>
-                        </div>
-                    </Link>
+                    <div 
+                        className="user" 
+                        onClick={() => handleProfileClick(displayUser.id)}
+                        style={{cursor: "pointer"}}
+                    >
+                        <img
+                            src={getImageUrl(displayUser.profilePic)}
+                            alt=""
+                        />
+                        <span>{displayUser.username}</span>
+                    </div>
                     <div className="item">
                         <PeopleIcon/>
                         <span>Following</span>

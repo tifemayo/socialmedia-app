@@ -15,7 +15,7 @@ import post3 from '../../images/side-view-anime-style-man-portrait.jpg';
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { useLocation } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/authContext";
 import Edit from "../../components/edit/edit";
 
@@ -27,8 +27,13 @@ const Profile = () => {
  // extracts the userId from the URL pathname using the useLocation hook
   const userId = parseInt(useLocation().pathname.split("/")[2]);
   const queryClient = useQueryClient();
+  
+  // Scroll to top whenever profile page is loaded or userId changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [userId]);
  
- // uses useQuery hook to fetch user data 
+  // uses useQuery hook to fetch user data 
   const { isLoading: userLoading, error, data: userData } = useQuery({
     queryKey: ["user", userId],
     queryFn: () => makeRequest.get(`/users/find/${userId}`).then(res => res.data),
@@ -42,7 +47,6 @@ const Profile = () => {
   console.log(relationshipData);
 
   // mutation to follow a user
-
   const mutation = useMutation({
     mutationFn: (following) => {
       if (following)
@@ -107,10 +111,6 @@ const Profile = () => {
                   <div className="item">
                     <PlaceIcon />
                     <span>{userData.city || "No location set"}</span>
-                  </div>
-                  <div className="item">
-                    <LanguageIcon />
-                    <span>{userData.platform || "No platform set"}</span>
                   </div>
                 </div>
                 {relationshipLoading ? (
