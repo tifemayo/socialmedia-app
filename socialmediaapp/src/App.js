@@ -7,10 +7,7 @@ import SearchPage from "./pages/search/SearchPage";
 import {
   createBrowserRouter,
   RouterProvider,
-  BrowserRouter,
   Outlet,
-  Routes,
-  Route,
   Navigate,
 } from "react-router-dom";
 import Home from "./pages/home/Home"
@@ -61,47 +58,54 @@ function App() {
 
     return children;
   };
-  const Router = createBrowserRouter([
+  const router = createBrowserRouter(
+    [
+      {
+        path: "/",
+        element:(
+        <ProtectedRoute>
+            <Layout />
+        </ProtectedRoute>
+        ),
+        children:[
+          {
+            path:"/",
+            element:<Home />
+          }, 
+          {
+            path:"/profile/:id",
+            element:<Profile />
+          },
+          {
+            path:"/search",
+            element:<SearchPage />
+          },
+        ]
+      },
+      {
+        path: "/login",
+        element: <Login/>,
+      },
+      {
+        path: "/register",
+        element: <Register/>,
+      },
+      {
+        path: "/platforms",
+        element: <PlatformSelection />,
+      },
+    ],
     {
-      path: "/",
-      element:(
-      <ProtectedRoute>
-          <Layout />
-      </ProtectedRoute>
-      ),
-      children:[
-        {
-          path:"/",
-          element:<Home />
-        }, 
-        {
-          path:"/profile/:id",
-          element:<Profile />
-        },
-        {
-          path:"/search",
-          element:<SearchPage />
-        },
-      ]
-    },
-    {
-      path: "/login",
-      element: <Login/>,
-    },
-    {
-      path: "/register",
-      element: <Register/>,
-    },
-    {
-      path: "/platforms",
-      element: <PlatformSelection />,
-    },
-  ]);
+      future: {
+        v7_skipActionErrorRevalidation: true
+      }
+    }
+  );
   
   
   return (
     <div >
-      <RouterProvider router={Router} />
+      <RouterProvider router={router} />
     </div>
    
   );
