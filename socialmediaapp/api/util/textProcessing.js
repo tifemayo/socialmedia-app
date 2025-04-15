@@ -63,33 +63,5 @@ const clusterDocuments = async (documents, k = 5) => {
   }
 };
 
-// Content-based recommendation
-// Add this function if it's missing
-const getRecommendations = (post, allPosts, maxRecommendations = 3) => {
-  if (!post || !allPosts || allPosts.length === 0) return [];
-  
-  // Simple content-based recommendation
-  // Find posts with similar content based on shared words
-  const postWords = new Set(preprocessText(post.desc));
-  
-  // Score other posts based on word overlap
-  const scoredPosts = allPosts
-    .filter(p => p.id !== post.id) // Don't recommend the same post
-    .map(p => {
-      const pWords = preprocessText(p.desc);
-      // Count shared words
-      const sharedWords = pWords.filter(word => postWords.has(word)).length;
-      return {
-        ...p,
-        similarityScore: sharedWords / Math.max(1, pWords.length) // Normalize by post length
-      };
-    })
-    .filter(p => p.similarityScore > 0) // Only posts with some similarity
-    .sort((a, b) => b.similarityScore - a.similarityScore) // Sort by similarity
-    .slice(0, maxRecommendations); // Take top recommendations
-    
-  return scoredPosts;
-};
-
-// Make sure to export all functions
-export { preprocessText, calculateTfIdf, clusterDocuments, getRecommendations };
+// Export only the TF-IDF and clustering functions
+export { preprocessText, calculateTfIdf, clusterDocuments };

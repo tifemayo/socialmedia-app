@@ -1,7 +1,8 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
 import moment from "moment";
-import { preprocessText, calculateTfIdf, clusterDocuments, getRecommendations } from "../util/textProcessing.js";
+
+// import { preprocessText, calculateTfIdf, clusterDocuments } from "../util/textProcessing.js";
 
 
 export const getPosts = (req, res) => {
@@ -101,8 +102,7 @@ export const deletePost = (req, res) => {
   });
 };
 
-// Enhanced search posts function with intelligence features
-// Inside your searchPosts function, add these logs
+// Update the searchPosts function to remove intelligence features
 export const searchPosts = (req, res) => {
   const searchQuery = req.query.q;
   
@@ -116,7 +116,7 @@ export const searchPosts = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
-    // Get basic search results first
+    // Simple search query
     const searchTerm = `%${searchQuery}%`;
     const q = `
       SELECT p.*, u.id AS userId, u.name, u.profilePic 
@@ -127,70 +127,14 @@ export const searchPosts = (req, res) => {
       LIMIT 50
     `;
 
-    db.query(q, [searchTerm, searchTerm], async (err, data) => {
+    db.query(q, [searchTerm, searchTerm], (err, data) => {
       if (err) {
         console.error("Database error:", err);
         return res.status(500).json(err);
       }
       
-      // If no results, return empty array
-      if (!data || data.length === 0) {
-        return res.status(200).json([]);
-      }
-      
-      try {
-        console.log("Found posts:", data.length);
-        console.log("Applying intelligent search processing...");
-        
-        // Apply TF-IDF for relevance scoring
-        const tfidf = calculateTfIdf(data);
-        const searchTerms = preprocessText(searchQuery);
-        console.log("Search terms:", searchTerms);
-        
-        // Score each post based on TF-IDF relevance to search query
-        const scoredPosts = data.map((post, index) => {
-          let relevanceScore = 0;
-          
-          searchTerms.forEach(term => {
-            const termScore = tfidf.tfidf(term, index);
-            relevanceScore += termScore || 0;
-          });
-          
-          return {
-            ...post,
-            relevanceScore: relevanceScore || 0.1 // Ensure minimum score
-          };
-        });
-        
-        // Sort by relevance score
-        scoredPosts.sort((a, b) => b.relevanceScore - a.relevanceScore);
-        
-        // Apply clustering to identify topics
-        const clusteredPosts = await clusterDocuments(scoredPosts);
-        
-        // Get recommendations for the top post
-        let recommendations = [];
-        if (clusteredPosts.length > 0) {
-          recommendations = getRecommendations(clusteredPosts[0], data);
-        }
-        
-        // Return search results with metadata
-        console.log("Sending enhanced search results");
-        return res.status(200).json({
-          results: clusteredPosts,
-          recommendations,
-          searchMetadata: {
-            query: searchQuery,
-            totalResults: clusteredPosts.length,
-            processingTime: new Date().getTime()
-          }
-        });
-      } catch (processingErr) {
-        console.error("Text processing error:", processingErr);
-        console.error(processingErr.stack); // Log the full stack trace
-        // Fallback to returning original results if text processing fails
-        return res.status(200).json(data);
-      }
+      // Return basic search results without processing
+      return res.status(200).json(data);
     });
   });
 };
