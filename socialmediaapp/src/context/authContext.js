@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState } from "react";
-// import profileImg from '../images/girl-afro (1).jpg';
 import axios from "axios";
 
 export const AuthContext = createContext();
@@ -27,12 +26,24 @@ export const AuthContextProvider = ({ children }) => {
     }));
   };
 
+  const logout = async () => {
+    try {
+      await axios.post("http://localhost:8800/api/auth/logout", {}, {
+        withCredentials: true,
+      });
+      setCurrentUser(null);
+      localStorage.removeItem("user");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
+
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(currentUser));
   }, [currentUser]);
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, updateUser }}>
+    <AuthContext.Provider value={{ currentUser, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
