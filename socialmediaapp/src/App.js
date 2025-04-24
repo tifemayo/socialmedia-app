@@ -36,11 +36,11 @@ function App() {
   const Layout = () => {
     return (
       <QueryClientProvider client={queryClient}>
-        <div className={`theme-${darkMode ? "dark" : "light"}`}>
+        <div className={`theme-${darkMode ? "dark" : "light"}`} style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <NavBar />
-          <div style ={{ display: "flex"}}>
+          <div style={{ display: "flex", flex: 1, minHeight: "calc(100vh - 70px)" }}>
             <LeftBar />
-            <div style={{ flex: 6 }}>
+            <div style={{ flex: 6, minHeight: "100%" }}>
                <Outlet />
             </div>
             <RightBar />

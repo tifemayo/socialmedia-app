@@ -42,51 +42,62 @@
       color: #e74c3c;
     }
 
+    // Update the search results container to use a list layout
     .search-results-container {
       width: 100%;
-      margin-bottom: 11px; // Add margin at the bottom
-      padding-bottom: 10px; // Add padding at the bottom
+      margin-bottom: 11px;
+      padding-bottom: 10px;
       border-bottom: 1px solid themed("border");
     }
-
-    .search-results {
+    
+    .search-results-list {
       display: flex;
       flex-direction: column;
       gap: 20px;
-      width: 100%;
-      padding-right: 10px;
-      padding-bottom: 40px; // Increase bottom padding
+      padding: 0 20px;
+      padding-bottom: 40px;
       
-      @media (min-width: 768px) {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-      }
       
-      @media (min-width: 1024px) {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      @media (min-width: 1440px) {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      
-      .search-result-item {
-        width: 100%;
+      .search-result-row {
+        width: calc(100% - 20px); //
         margin-bottom: 20px;
-        overflow: visible; // Ensure content isn't cropped
+        background-color: themed("bg");
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: visible;
         
-        // Make sure post content is fully visible
         & > div {
           width: 100%;
-          overflow: visible;
+          
+          // Match the post styling from the posts page
+          .post {
+            border: none;
+            box-shadow: none;
+            margin: 0;
+            border-radius: 10px;
+            overflow: visible;
+            
+            .container {
+              padding: 20px;
+              border-radius: 10px;
+              
+              .content {
+                img, video {
+                  max-width: 100%;
+                  border-radius: 5px;
+                  object-fit: cover;
+                }
+              }
+            }
+          }
         }
       }
     }
-
+    
+    // Keep the mobile styles
     @include mobile {
       padding: 10px;
-
+    
       .search-header {
         h2 {
           font-size: 20px;
