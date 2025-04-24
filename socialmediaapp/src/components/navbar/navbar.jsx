@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import SearchResults from "../searchResults/SearchResults";
 
+import defaultAvatar from "../../images/default.jpeg";
 
 const NavBar = () => {
     const { toggle, darkMode } = useContext(DarkModeContext);
@@ -100,14 +101,20 @@ const NavBar = () => {
     };
 
     // if an image needs the /upload/ prefix
+    // Update the getImageUrl function
     const getImageUrl = (imagePath) => {
-        if (!imagePath) return "";
-        // If the path already starts with http or /, return as is
-        if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
+        // Check for null, undefined, empty string, or "null" string
+        if (!imagePath || imagePath === "null" || imagePath.trim() === "") {
+            return defaultAvatar;
+        }
+        
+        // Handle already formatted URLs
+        if (imagePath.startsWith('http') || imagePath.startsWith('/upload/')) {
             return imagePath;
         }
-        // Otherwise, add the /upload/ prefix
-        return "/upload/" + imagePath;
+        
+        // Handle local uploads
+        return `/upload/${imagePath}`;
     };
 
     // Use userData if available, otherwise fall back to currentUser
@@ -174,7 +181,13 @@ const NavBar = () => {
                 <NotificationsOutlinedIcon/>
                 <Link to={`/profile/${currentUser.id}`} style={{textDecoration:"none", color: "inherit"}}>
                     <div className="user">
-                        <img src={getImageUrl(displayUser.profilePic)} alt="" />
+                        <img 
+                            src={getImageUrl(displayUser.profilePic)} 
+                            alt={displayUser.name || "User"} 
+                            onError={(e) => {
+                                e.target.src = defaultAvatar;
+                            }}
+                        />
                         <span>{displayUser.name}</span>
                     </div>
                 </Link>
