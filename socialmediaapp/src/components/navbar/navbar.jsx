@@ -18,13 +18,14 @@ import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import SearchResults from "../searchResults/SearchResults";
 
+
 const NavBar = () => {
     const { toggle, darkMode } = useContext(DarkModeContext);
-    const { currentUser } = useContext(AuthContext);
+    const { currentUser, logout } = useContext(AuthContext); // Add logout to context
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [showResults, setShowResults] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
-    const navigate = useNavigate();
     const searchRef = useRef(null);
     const searchResultsRef = useRef(null);
 
@@ -112,6 +113,15 @@ const NavBar = () => {
     // Use userData if available, otherwise fall back to currentUser
     const displayUser = userData || currentUser;
 
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate("/login");
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
+
     return(
         <div className="navbar"> 
             <div className="left">
@@ -168,6 +178,9 @@ const NavBar = () => {
                         <span>{displayUser.name}</span>
                     </div>
                 </Link>
+                <div className="logout-button" onClick={handleLogout}>
+                    Logout
+                </div>
             </div>
         </div>
       

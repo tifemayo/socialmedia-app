@@ -137,7 +137,16 @@
           object-fit: cover;
         }
 
-        
+        .logout-button {
+          cursor: pointer;
+          padding: 5px 10px;
+          border-radius: 5px;
+          color: themed("textColor");
+          
+          &:hover {
+            background-color: themed("bgSoft");
+          }
+        }
       }
     }
   }
