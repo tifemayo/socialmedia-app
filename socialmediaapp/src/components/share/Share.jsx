@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import PlatformIcon from "../PlatformIcon/PlatformIcon";
 import axios from "axios";
+import defaultAvatar from "../../images/default.jpeg";
 
 const Share = () => {
   const [file, setFile] = useState(null);
@@ -26,11 +27,15 @@ const Share = () => {
   });
 
   const getImageUrl = (imagePath) => {
-    if (!imagePath) return "/images/default-profile.jpg";
-    if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
+    if (!imagePath || imagePath === "null" || imagePath.trim() === "") {
+      return defaultAvatar;
+    }
+    
+    if (imagePath.startsWith('http') || imagePath.startsWith('/upload/')) {
       return imagePath;
     }
-    return "/upload/" + imagePath;
+    
+    return `/upload/${imagePath}`;
   };
 
   const handlePlatformClick = () => {
