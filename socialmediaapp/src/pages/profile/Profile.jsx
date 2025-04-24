@@ -18,6 +18,7 @@ import { useLocation } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/authContext";
 import Edit from "../../components/edit/edit";
+import defaultAvatar from "../../images/default.jpeg";
 
 const Profile = () => {
   const [openEdit, setOpenEdit] = useState(false);
@@ -68,6 +69,18 @@ const Profile = () => {
   if (error) return "Error loading profile";
   if (!userData) return "No user data found";
 
+  const getImageUrl = (imagePath) => {
+    if (!imagePath || imagePath === "null" || imagePath.trim() === "") {
+      return defaultAvatar;
+    }
+    
+    if (imagePath.startsWith('http') || imagePath.startsWith('/upload/')) {
+      return imagePath;
+    }
+    
+    return `/upload/${imagePath}`;
+  };
+
   return (
     <div className="profile">
       {userLoading ? (
@@ -76,14 +89,20 @@ const Profile = () => {
         <>
           <div className="images">
             <img
-              src={"/upload/" + userData?.coverPic || "/default-cover.jpg"}
-              alt=""
+              src={getImageUrl(userData?.coverPic)}
+              alt="Cover"
               className="cover"
+              onError={(e) => {
+                e.target.src = defaultAvatar;
+              }}
             />
             <img
-              src={"/upload/" + userData?.profilePic || "/default-cover.jpg"}
-              alt=""
+              src={getImageUrl(userData?.profilePic)}
+              alt={userData?.name || "Profile"}
               className="profilePic"
+              onError={(e) => {
+                e.target.src = defaultAvatar;
+              }}
             />
           </div>
           <div className="profileContainer">
