@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import EditPlatforms from "../editPlatforms/EditPlatforms";
 import EditIcon from '@mui/icons-material/Edit';
+import defaultAvatar from "../../images/default.jpeg";
 
 const LeftBar = () => {
     const { currentUser } = useContext(AuthContext);
@@ -41,13 +42,15 @@ const LeftBar = () => {
 
     // Helper function to determine if an image needs the /upload/ prefix
     const getImageUrl = (imagePath) => {
-        if (!imagePath) return "";
-        // If the path already starts with http or /, return as is
-        if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
+        if (!imagePath || imagePath === "null" || imagePath.trim() === "") {
+            return defaultAvatar;
+        }
+        
+        if (imagePath.startsWith('http') || imagePath.startsWith('/upload/')) {
             return imagePath;
         }
-        // Otherwise, add the /upload/ prefix
-        return "/upload/" + imagePath;
+        
+        return `/upload/${imagePath}`;
     };
 
     const getPlatformImage = (platformId) => {
