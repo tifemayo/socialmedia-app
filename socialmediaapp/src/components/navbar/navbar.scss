@@ -6,7 +6,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
+    padding-top: 10px ;
+    padding-bottom: 10px;
     height: 50px;
     border-bottom: 1px solid rgb(199, 194, 194);
     position: sticky;
@@ -15,22 +16,45 @@
     color:themed("textColor");
     z-index: 999;
     gap: 20px;
+  
+    
 
-    .left {
+    @include mobile {
+      padding: 10px;
+      width: 146vw;
+    }
+    @include tablet {
+      padding: 10px;
+      width: 146vw;
+    }
+
+    .leftPart {
       display: flex;
       align-items: center;
       gap: 30px;
 
-      a {  // targets Link component
+      @include mobile {
+        gap: 15px; /* Reduced gap for mobile */
+        // flex: 0 1 auto; /* Allow shrinking if needed */
+      }
+
+      a {  
         text-decoration: none;
         color: inherit;
         
         &:hover {
-          opacity: 0.8; /* Subtle hover effect */
+          opacity: 0.8;
         }
+
+        
   
         span {
           // span styles inside Link
+        }
+      }
+      svg {
+        @include mobile {
+          font-size: 20px; /* Smaller icons on mobile */
         }
       }
 
@@ -39,26 +63,29 @@
         font-style: normal;
         font-size: 25px;
         font-family: "Boldonse", system-ui;
-        // background: linear-gradient(135deg, #4a0080, #a3008c, #e91e63);
-        
         background: radial-gradient(circle at center, #ce6bf3, #bd34d8,#8b18a2);
         -webkit-background-clip: text;  // for webkit browsers
         background-clip: text;
         color: transparent; 
         letter-spacing: 0.04em;
-        // color: themed("logo");
+
+        @include mobile {
+          font-size: 22px;
+        }
+       
       }
 
-      
     }
 
-    .right {
+    .rightPart {
       display: flex;
       align-items: center;
-      gap: 20px;
+      // gap: 20px;
+      background-color: themed("bg"); 
 
       @include mobile{
-        display: none;
+        gap: 10px;
+        // flex: 0 0 auto; 
       }
       .search {
         display: flex;
@@ -84,17 +111,20 @@
           flex: 1;
           font-size: 14px;
 
+          @include mobile{
+            width: 50px;
+          }
+
+          @include tablet{
+            width: 70px;
+          }
+          
+
           &:focus {
             outline: none;
           }
 
-          @include mobile{
-            display: none;
-          }
-
-          @include tablet{
-            width: 200px;
-          }
+          
         }
 
         .clear-search {
@@ -117,6 +147,7 @@
           border-radius: 8px;
           overflow: hidden;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
         }
       }
       .user {
@@ -125,16 +156,29 @@
         gap: 10px;
         font-weight: 500;
         cursor: pointer;
+        background-color: themed("bg");
+        padding: 5px;
+        border-radius: 5px;
 
         @include tablet{
-          display: none;
+          // display: none;
         }
+        // @include mobile {
+        //   gap: 5px;
+        //   flex-shrink: 0; 
+        // }
+
 
         img {
           width: 30px;
           height: 30px;
           border-radius: 50%;
           object-fit: cover;
+
+          @include mobile {
+            width: 20px;
+            height: 20px;
+          }
         }
       }
 
@@ -144,6 +188,7 @@
         border-radius: 5px;
         color: themed("textColor");
         transition: background-color 0.2s ease;
+        background-color: themed("bg"); 
         
         &:hover {
           background-color: themed("bgSoft");

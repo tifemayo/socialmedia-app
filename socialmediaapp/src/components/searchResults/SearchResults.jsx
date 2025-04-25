@@ -30,7 +30,7 @@ const SearchResults = ({ results, loading, query, onResultClick }) => {
 
   return (
     <div className="search-results">
-      <div className="results-count">{results.length} results found</div>
+      <div className="results-count">{results.length} result found</div>
       <div className="results-list">
         {results.map((post) => (
           <Link 

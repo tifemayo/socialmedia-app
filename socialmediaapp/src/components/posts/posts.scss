@@ -31,12 +31,12 @@
         }
 
         &.active {
-          background-color: #a63ae4;  // Solid purple background
-          border: none;               // Remove border
-          color: #ffffff;             // White text for contrast
-          font-weight: 500;           // Keep text slightly bold
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  // Subtle shadow
-          transform: translateY(-1px); // Slight lift effect
+          background-color: #a63ae4;  
+          border: none;               
+          color: #ffffff;             
+          font-weight: 500;           
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  
+          transform: translateY(-1px); 
         }
 
         &:disabled {

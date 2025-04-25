@@ -7,6 +7,11 @@
     min-height: calc(100vh - 70px);
     color: themed("textColor");
     width: 100%;
+
+    @include mobile {
+      width: 550px;
+      height: 100% !important;
+    }
     
     .search-header {
       margin-bottom: 20px;

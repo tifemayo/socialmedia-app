@@ -101,7 +101,6 @@ const NavBar = () => {
     };
 
     // if an image needs the /upload/ prefix
-    // Update the getImageUrl function
     const getImageUrl = (imagePath) => {
         // Check for null, undefined, empty string, or "null" string
         if (!imagePath || imagePath === "null" || imagePath.trim() === "") {
@@ -131,7 +130,7 @@ const NavBar = () => {
 
     return(
         <div className="navbar"> 
-            <div className="left">
+            <div className="leftPart">
                 <Link to ="/"  className="logo-link" style={{textDecoration:"none"}}>
                     <span>Unifeed</span>
                 </Link>
@@ -145,9 +144,9 @@ const NavBar = () => {
                 ) : (
                     <DarkModeOutlinedIcon onClick={toggle} />
                 )}
-                <WidgetsRoundedIcon />
+                {/* <WidgetsRoundedIcon /> */}
             </div>   
-            <div className="right">
+            <div className="rightPart">
                 <div className="search" ref={searchRef}>
                     <form onSubmit={handleSearchSubmit}>
                         <SearchOutlinedIcon />
@@ -176,10 +175,8 @@ const NavBar = () => {
                         </div>
                     )}
                 </div>
-                <PersonOutlinedIcon/>
-                <ChatBubbleRoundedIcon/>
-                <NotificationsOutlinedIcon/>
-                <Link to={`/profile/${currentUser.id}`} style={{textDecoration:"none", color: "inherit"}}>
+            
+                <Link to={`/profile/${currentUser.id}`} style={{ textDecoration: "none", color: "inherit" }}>
                     <div className="user">
                         <img 
                             src={getImageUrl(displayUser.profilePic)} 

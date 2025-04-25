@@ -55,17 +55,6 @@
             span {
               font-size: 13px;
               color: themed("textColor");
-              margin-bottom: 0;  // Remove bottom margin
-              display: inline;   // Change to inline
-              text-align: left;  // Ensure text aligns left
-            }
-
-            a {
-              display: flex;     // Add flex display
-              align-items: center; // Center items vertically
-              gap: 10px;        // Space between image and text
-              text-decoration: none;
-              color: inherit;
             }
           }
 
