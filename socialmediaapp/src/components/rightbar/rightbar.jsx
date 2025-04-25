@@ -1,203 +1,84 @@
 import "./rightbar.scss"
-import friend1 from "../../images/portrait-girl-cap-with-backpack-3d-rendering.jpg";
-import friend2 from "../../images/side-view-anime-style-man-portrait.jpg";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { makeRequest } from "../../axios";
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
+import defaultAvatar from "../../images/default.jpeg";
+import { Link } from "react-router-dom";
 
 const RightBar = () => {
-    return (
-        <div className="rightBar">
-          <div className="container">
-            <div className="item">
-              <span>Suggestions For You</span>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src={friend1}
-                    alt=""
-                  />
-                  <span>Melissa Yam</span>
-                </div>
-                <div className="buttons">
-                  <button>follow</button>
-                  <button>dismiss</button>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src={friend2}
-                    alt=""
-                  />
-                  <span> Anthony Joshua</span>
-                </div>
-                <div className="buttons">
-                  <button>follow</button>
-                  <button>dismiss</button>
-                </div>
-              </div>
-            </div>
-            <div className="item">
-              <span>Latest Activities</span>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src={friend1} alt=""
-                  />
-                  <p>
-                    <span>Jane Doe</span> changed their cover picture
-                  </p>
-                </div>
-                <span className="minutes">1 min ago</span>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src={friend1} alt=""
-                  />
-                  <p>
-                    <span>Jane Doe</span> changed their cover picture
-                  </p>
-                </div>
-                <span className="minutes">1 min ago</span>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src={friend1} alt=""
-                  />
-                  <p>
-                    <span>Jane Doe</span> changed their cover picture
-                  </p>
-                </div>
-                <span className="minutes">1 min ago</span>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src={friend1} alt=""
-                  />
-                  <p>
-                    <span>Jane Doe</span> changed their cover picture
-                  </p>
-                </div>
-                <span className="minutes">1 min ago</span>
-              </div>
-            </div>
-            <div className="item">
-              <span>Online Friends</span>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-              <div className="user">
-                <div className="userInfo">
-                  <img
-                    src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                    alt=""
-                  />
-                  <div className="online" />
-                  <span>Jane Doe</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+    const { currentUser } = useContext(AuthContext);
+    const queryClient = useQueryClient();
+
+    // Fetch suggested users
+    const { data: suggestedUsers } = useQuery({
+        queryKey: ["suggestedUsers"],
+        queryFn: () => makeRequest.get("/users/suggestions?limit=4").then(res => res.data)
+    });
+
+    // Fetch followers
+    const { data: followers } = useQuery({
+        queryKey: ["followers", currentUser.id],
+        queryFn: () => makeRequest.get(`/relationships/followers/${currentUser.id}`).then(res => res.data)
+    });
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath || imagePath === "null" || imagePath.trim() === "") {
+            return defaultAvatar;
+        }
+        
+        if (imagePath.startsWith('http') || imagePath.startsWith('/upload/')) {
+            return imagePath;
+        }
+        
+        return `/upload/${imagePath}`;
     };
 
-export  default RightBar;
+    // Follow/Unfollow mutation
+    const mutation = useMutation({
+        mutationFn: (userId) => makeRequest.post("/relationships", { userId }),
+        onSuccess: () => {
+            queryClient.invalidateQueries(["suggestedUsers"]);
+        },
+    });
+
+    return (
+        <div className="rightBar">
+            <div className="container">
+                <div className="item">
+                    <span>Suggestions For You</span>
+                    {suggestedUsers?.map(user => (
+                        <div className="user" key={user.id}>
+                            <div className="userInfo">
+                                <Link to={`/profile/${user.id}`}>
+                                    <img src={getImageUrl(user.profilePic)} alt={user.name} />
+                                </Link>
+                                <span>{user.name}</span>
+                            </div>
+                            <div className="buttons">
+                                <button onClick={() => mutation.mutate(user.id)}>follow</button>
+                                <button>dismiss</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="item">
+                    <span>Your Followers</span>
+                    {followers?.map(user => (
+                        <div className="user" key={user.id}>
+                            <div className="userInfo">
+                                <Link to={`/profile/${user.id}`}>
+                                    <img src={getImageUrl(user.profilePic)} alt={user.name} />
+                                    <span>{user.name}</span>
+                                </Link>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default RightBar;
