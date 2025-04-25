@@ -16,10 +16,10 @@ const RightBar = () => {
         queryFn: () => makeRequest.get("/users/suggestions?limit=4").then(res => res.data)
     });
 
-    // Fetch followers
-    const { data: followers } = useQuery({
-        queryKey: ["followers", currentUser.id],
-        queryFn: () => makeRequest.get(`/relationships/followers/${currentUser.id}`).then(res => res.data)
+    // Fetch users that currentUser follows
+    const { data: following } = useQuery({
+        queryKey: ["following", currentUser.id],
+        queryFn: () => makeRequest.get(`/relationships?followerUserId=${currentUser.id}`).then(res => res.data)
     });
 
     const getImageUrl = (imagePath) => {
@@ -64,8 +64,8 @@ const RightBar = () => {
                 </div>
 
                 <div className="item">
-                    <span>Your Followers</span>
-                    {followers?.map(user => (
+                    <span>People You Follow</span>
+                    {following?.map(user => (
                         <div className="user" key={user.id}>
                             <div className="userInfo">
                                 <Link to={`/profile/${user.id}`}>

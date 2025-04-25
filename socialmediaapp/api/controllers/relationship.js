@@ -1,13 +1,42 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
 
-//gets all user IDs who are following a particular user.
+//Checks if user IDs is following a particular user.
 export const getRelationships = (req,res)=>{
-    const q = "SELECT followerUserId FROM relationships WHERE followedUserId = ?";
+    if (req.query.followerUserId) {
+        // Get full user details of people that the user follows
+        const q = `
+            SELECT u.* 
+            FROM relationships r
+            JOIN users u ON u.id = r.followedUserId
+            WHERE r.followerUserId = ?`;
+
+        db.query(q, [req.query.followerUserId], (err, data) => {
+            if (err) return res.status(500).json(err);
+            return res.status(200).json(data);
+        });
+    } else {
+        // Original functionality for getting follower IDs
+        const q = "SELECT followerUserId FROM relationships WHERE followedUserId = ?";
+
+        db.query(q, [req.query.followedUserId], (err, data) => {
+            if (err) return res.status(500).json(err);
+            return res.status(200).json(data.map(relationship=>relationship.followerUserId));
+        });
+    }
+}
+
+// Gets all users that the current user is following
+export const getFollowingUsers = (req,res)=>{
+    const q = `
+        SELECT u.* 
+        FROM relationships r
+        JOIN users u ON u.id = r.followedUserId
+        WHERE r.followerUserId = ?`;
 
     db.query(q, [req.query.followedUserId], (err, data) => {
       if (err) return res.status(500).json(err);
-      return res.status(200).json(data.map(relationship=>relationship.followerUserId));
+      return res.status(200).json(data);
     });
 }
 
