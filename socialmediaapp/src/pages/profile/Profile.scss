@@ -4,6 +4,8 @@
   @include themify($themes) {
     background-color: themed("bgSoft");
     color: themed("textColor");
+   
+   
   
 
     @include mobile {
@@ -48,10 +50,12 @@
 
     .profileContainer {
       padding: 20px 70px;
+      min-height: 100vh; 
 
       @include mobile {
         padding: 10px;
         width: 448px;
+       
       
       }
 
