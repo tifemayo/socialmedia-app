@@ -6,15 +6,8 @@
     position: sticky;
     top: 70px;
     height: calc(100vh - 70px);
-    overflow: scroll;
+    overflow: auto;
     background-color: themed("bgSoft");
-
-    @include mobile{
-      display: none;
-    }
-    @include tablet{
-      display: none;
-    }
 
     &::-webkit-scrollbar {
       display: none;
@@ -24,28 +17,28 @@
       padding: 20px;
 
       .item {
-        -webkit-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
-        -moz-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
-        box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
+        background-color: themed("bg");
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         padding: 20px;
         margin-bottom: 20px;
-        background-color: themed("bg");
+        border-radius: 8px;
+        text-align: center;  // Add this line
 
         span {
-          color: gray;
-          
+          color: themed("textColorSoft");
+          font-size: 14px;
+          font-weight: 500;
+          display: block;  // Add this line
+          margin-bottom: 15px;  // Add this line
         }
 
         .user {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin: 20px 0px;
+          margin: 15px 0px;
+          text-align: left;  // Add this line to keep user info left-aligned
 
-          .minutes{
-            font-size: 12px;  // increased from 5px as that might be too small to see
-            color: #999; 
-          }
           .userInfo {
             display: flex;
             align-items: center;
@@ -53,65 +46,49 @@
             position: relative;
 
             img {
-              width: 40px;
-              height: 40px;
+              width: 35px;
+              height: 35px;
               border-radius: 50%;
               object-fit: cover;
             }
 
-            .online {
-              width: 12px;
-              height: 12px;
-              border-radius: 50%;
-              background-color: limegreen;
-              position: absolute;
-              top: 0;
-              left: 30px;
-            }
-
-            p {
-              color: themed("textColorSoft");
-                font-size: 12px; 
-            }
-
             span {
-              font-size: 18px;
-              font-weight: 500;
+              font-size: 13px;
               color: themed("textColor");
+              margin-bottom: 0;  // Remove bottom margin
+              display: inline;   // Change to inline
+              text-align: left;  // Ensure text aligns left
+            }
+
+            a {
+              display: flex;     // Add flex display
+              align-items: center; // Center items vertically
+              gap: 10px;        // Space between image and text
+              text-decoration: none;
+              color: inherit;
             }
           }
-          
 
           .buttons {
             display: flex;
-            align-items: center;
             gap: 10px;
 
             button {
               border: none;
-              padding: 5px 15px;
-              color: white;
-              border-radius: 20px;
+              padding: 5px 10px;
+              border-radius: 5px;
+              font-size: 12px;
               cursor: pointer;
-              transition: all 0.3s ease;
 
               &:first-child {
-                background-color: #4070f4;  // nicer blue for follow
-      
-                &:hover {
-                  background-color: #2952c8;
-                  transform: translateY(-2px);
-                }
+                background-color: #5271ff;
+                color: white;
               }
 
               &:last-child {
-                background-color: #ef4444;  // nicer red for dismiss
-      
-                &:hover {
-                  background-color: #dc2626;
-                  transform: translateY(-2px);
-                }
-            }
+                background-color: #f0544f;
+                color: white;
+              }
             }
           }
         }

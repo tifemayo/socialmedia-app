@@ -12,8 +12,11 @@ const RightBar = () => {
 
     // Fetch suggested users
     const { data: suggestedUsers } = useQuery({
-        queryKey: ["suggestedUsers"],
-        queryFn: () => makeRequest.get("/users/suggestions?limit=4").then(res => res.data)
+        queryKey: ["suggestedUsers", currentUser.id],
+        queryFn: () => makeRequest.get(`/users/suggestions?userId=${currentUser.id}`).then(res => {
+            console.log("Suggestions response:", res.data); // Debug log
+            return res.data;
+        })
     });
 
     // Fetch users that currentUser follows

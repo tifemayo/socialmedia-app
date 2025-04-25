@@ -48,3 +48,28 @@ export const updateUser = (req, res) => {
     );
   });
 }
+export const getSuggestions = (req, res) => {
+    const userId = req.query.userId;
+    const limit = parseInt(req.query.limit) || 4;
+
+    const q = `
+        SELECT DISTINCT u.* 
+        FROM users u 
+        WHERE u.id != ? 
+        AND u.id NOT IN (
+            SELECT followedUserId 
+            FROM relationships 
+            WHERE followerUserId = ?
+        )
+        ORDER BY u.id
+        LIMIT ?`;
+
+    db.query(q, [userId, userId, limit], (err, data) => {
+        if (err) return res.status(500).json(err);
+        const users = data.map(user => {
+            const { password, ...info } = user;
+            return info;
+        });
+        return res.json(users);
+    });
+};
