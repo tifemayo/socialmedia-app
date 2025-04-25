@@ -6,7 +6,6 @@ import Share from "../../components/share/Share"
 const Home = () => {
   return (
     <div className="home">
-     
       <Share/>
       <Posts/>
     </div>

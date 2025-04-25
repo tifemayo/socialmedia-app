@@ -4,11 +4,28 @@
   @include themify($themes) {
     background-color: themed("bgSoft");
     color: themed("textColor");
+  
+
+    @include mobile {
+      padding: 10px;
+      width: 100%;
+    }
+    @include tablet{
+      padding: 20px;
+      width: 100%;
+    }
+
+
+    
 
     .images {
       width: 100%;
       height: 300px;
       position: relative;
+      @include mobile {
+        padding: 10px;
+        width: 100%;
+      }
 
       .cover {
         width: 100%;
@@ -34,6 +51,8 @@
 
       @include mobile {
         padding: 10px;
+        width: 448px;
+      
       }
 
       @include tablet{
