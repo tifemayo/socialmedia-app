@@ -14,6 +14,7 @@ import { makeRequest } from "../../axios";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import moment from "moment";
+import defaultAvatar from "../../images/default.jpeg"; // Add this import
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
@@ -72,7 +73,10 @@ const Post = ({ post }) => {
       <div className="container">
         <div className="user">
           <div className="userInfo">
-            <img src={"/upload/" + post.profilePic} alt="" />
+            <img 
+              src={post.profilePic ? "/upload/" + post.profilePic : defaultAvatar} 
+              alt="" 
+            />
             <div className="details">
               <span 
                 className="name" 
