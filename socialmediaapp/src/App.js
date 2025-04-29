@@ -1,4 +1,5 @@
 import React from 'react';
+import { NotificationProvider } from './context/notificationContext';
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import PlatformSelection from "./pages/platforms/PlatformSelection";
@@ -104,10 +105,9 @@ function App() {
   
   
   return (
-    <div >
+    <NotificationProvider>
       <RouterProvider router={router} />
-    </div>
-   
+    </NotificationProvider>
   );
 }
 

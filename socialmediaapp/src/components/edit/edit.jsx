@@ -9,6 +9,7 @@ import TikTok from "../../assets/tik-tok.png";
 import Puzzle from "../../assets/puzzle.png";
 import Timer from '../timer/Timer';
 import Notification from '../timerNotification/Notification';
+import defaultAvatar from "../../images/default.jpeg";
 
 const platforms = [
   { id: "instagram", name: "Instagram", image: Instagram },
@@ -191,7 +192,7 @@ const Edit = ({ setOpenEdit, user}) => {
               />
               <div className="imgContainer">
                 <img
-                  src={cover ? URL.createObjectURL(cover) : "/upload/" + user.coverPic}
+                  src={cover ? URL.createObjectURL(cover) : user.coverPic ? "/upload/" + user.coverPic : defaultAvatar}
                   alt=""
                 />
               </div>
@@ -206,7 +207,7 @@ const Edit = ({ setOpenEdit, user}) => {
               />
               <div className="imgContainer">
                 <img
-                  src={profile ? URL.createObjectURL(profile) : "/upload/" + user.profilePic}
+                  src={profile ? URL.createObjectURL(profile) : user.profilePic ? "/upload/" + user.profilePic : defaultAvatar}
                   alt=""
                 />
               </div>
@@ -282,6 +283,7 @@ const Edit = ({ setOpenEdit, user}) => {
             </div>
           </div>
           <button 
+            className="save-button"
             onClick={handleSubmit}
             disabled={loading}
           >

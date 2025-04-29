@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './Timer.scss'; 
+import { useNotification } from '../../context/notificationContext'; // Import the notification context
 
-const Timer = ({ timeLimit, onLimitReached }) => {
+const Timer = ({ timeLimit }) => {
     const [activeTime, setActiveTime] = useState(0);
     const [isActive, setIsActive] = useState(true);
+    const { showNotification } = useNotification(); // Get the showNotification function
 
     useEffect(() => {
         let timer;
@@ -19,9 +21,13 @@ const Timer = ({ timeLimit, onLimitReached }) => {
     useEffect(() => {
         if (activeTime >= timeLimit) {
             setIsActive(false);
-            onLimitReached();
+            showNotification(`You have elapsed your time. Go work on your goal!`); // Show notification
         }
-    }, [activeTime, timeLimit, onLimitReached]);
+    }, [activeTime, timeLimit, showNotification]);
+
+    useEffect(() => {
+        console.log(`Active Time: ${activeTime}`);
+    }, [activeTime]);
 
     return (
         <div>
