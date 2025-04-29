@@ -8,6 +8,7 @@ import Instagram from "../../assets/instagram.png";
 import TikTok from "../../assets/tik-tok.png";
 import Puzzle from "../../assets/puzzle.png";
 import Timer from '../timer/Timer';
+// import NotificationModal from '../notification/NotificationModal';
 
 const platforms = [
   { id: "instagram", name: "Instagram", image: Instagram },
@@ -34,6 +35,8 @@ const Edit = ({ setOpenEdit, user}) => {
 
   // Timer settings
   const [dailyLimit, setDailyLimit] = useState(0);
+  const [dailyGoal, setDailyGoal] = useState("");
+  // const [showNotification, setShowNotification] = useState(false);
 
   // Fetch user's connected platforms
   const { data: userPlatforms, isLoading: userPlatformsLoading } = useQuery({
@@ -151,6 +154,7 @@ const Edit = ({ setOpenEdit, user}) => {
       
       // Save timer settings to localStorage
       localStorage.setItem('dailyLimit', dailyLimit);
+      localStorage.setItem('dailyGoal', dailyGoal);
       
       setOpenEdit(false);
       setCover(null);
@@ -162,6 +166,10 @@ const Edit = ({ setOpenEdit, user}) => {
       setLoading(false);
     }
   }; 
+
+  const handleLimitReached = () => {
+    setShowNotification(true);
+  };
 
   if (userPlatformsLoading) {
     return <div className="edit">Loading platforms...</div>;
@@ -231,9 +239,20 @@ const Edit = ({ setOpenEdit, user}) => {
             value={dailyLimit} 
             onChange={(e) => setDailyLimit(Number(e.target.value))}
           />
-          {/* Displays the active time spent. */}
-          <Timer timeLimit={dailyLimit} onLimitReached={() => alert('Time limit reached!')} />
-
+          <label>Daily Goal</label>
+          <input 
+            type="text" 
+            value={dailyGoal} 
+            onChange={(e) => setDailyGoal(e.target.value)}
+            placeholder="What do you want to achieve today?"
+          />
+          <Timer timeLimit={dailyLimit} onLimitReached={handleLimitReached} />
+          {showNotification && (
+            <Notification
+              message={`You have elapsed your time. Go work on your goal: "${dailyGoal}" and visit later!`} 
+              onClose={() => setShowNotification(false)} 
+            />
+          )}
           <div className="platforms-section">
             <h3>Platforms</h3>
             {error && <div className="error-message">{error}</div>}
