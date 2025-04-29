@@ -24,7 +24,7 @@ const Timer = ({ timeLimit, onLimitReached }) => {
 
     return (
         <div>
-            <h2>Active Time: {activeTime} seconds</h2>
+            <h2>Active Time Spent: {activeTime} seconds</h2>
         </div>
     );
 };

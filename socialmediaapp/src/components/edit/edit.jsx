@@ -7,6 +7,7 @@ import { AuthContext } from "../../context/authContext";
 import Instagram from "../../assets/instagram.png";
 import TikTok from "../../assets/tik-tok.png";
 import Puzzle from "../../assets/puzzle.png";
+import Timer from '../timer/Timer';
 
 const platforms = [
   { id: "instagram", name: "Instagram", image: Instagram },
@@ -31,6 +32,9 @@ const Edit = ({ setOpenEdit, user}) => {
     city: user?.city || "",
   });
 
+  // Timer settings
+  const [dailyLimit, setDailyLimit] = useState(0);
+
   // Fetch user's connected platforms
   const { data: userPlatforms, isLoading: userPlatformsLoading } = useQuery({
     queryKey: ["userPlatforms", user.id],
@@ -52,6 +56,14 @@ const Edit = ({ setOpenEdit, user}) => {
       setSelectedPlatforms(userPlatforms);
     }
   }, [userPlatforms]);
+
+  // Load timer settings from localStorage
+  useEffect(() => {
+    const savedLimit = localStorage.getItem('dailyLimit');
+    if (savedLimit) {
+      setDailyLimit(Number(savedLimit));
+    }
+  }, []);
 
   const upload = async (file) => {
     try {
@@ -137,6 +149,9 @@ const Edit = ({ setOpenEdit, user}) => {
       
       await mutation.mutateAsync({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
       
+      // Save timer settings to localStorage
+      localStorage.setItem('dailyLimit', dailyLimit);
+      
       setOpenEdit(false);
       setCover(null);
       setProfile(null);
@@ -210,6 +225,15 @@ const Edit = ({ setOpenEdit, user}) => {
             onChange={handleChange}
             value={texts.city}
           />
+          <label>Daily Time Limit (seconds)</label>
+          <input 
+            type="number" 
+            value={dailyLimit} 
+            onChange={(e) => setDailyLimit(Number(e.target.value))}
+          />
+          {/* Displays the active time spent. */}
+          <Timer timeLimit={dailyLimit} onLimitReached={() => alert('Time limit reached!')} />
+
           <div className="platforms-section">
             <h3>Platforms</h3>
             {error && <div className="error-message">{error}</div>}

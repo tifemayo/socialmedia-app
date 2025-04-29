@@ -78,6 +78,14 @@
           color: themed("textColor");
           font-size: 14px;
 
+          input[type="number"] {
+            padding: 5px;
+            border: 1px solid themed("border");
+            color: themed("textColor");
+            background-color: transparent;
+            border-radius: 5px;
+          }
+
           .imgContainer {
             position: relative;
             cursor: pointer;
@@ -193,6 +201,9 @@
           }
         }
       }
+
+      
+      
 
       .close {
         position: absolute;
