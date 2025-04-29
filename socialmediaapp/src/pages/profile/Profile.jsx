@@ -133,14 +133,13 @@ const Profile = () => {
                   "loading"
                 ) : userId === currentUser.id ? (
                   <button 
-                    className="edit-button"
+                   
                     onClick={() => setOpenEdit(true)}
                   >
                     Edit Profile
                   </button>
                 ) : (
                   <button 
-                    className="follow-button"
                     onClick={handleFollow}
                   >
                     {relationshipData.includes(currentUser.id)
