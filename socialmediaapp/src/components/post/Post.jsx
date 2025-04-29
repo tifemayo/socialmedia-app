@@ -134,10 +134,6 @@ const Post = ({ post }) => {
             <TextsmsOutlinedIcon />
             See comments
           </div>
-          <div className="item">
-            <ShareOutlinedIcon />
-            Share
-          </div>
         </div>
         {commentOpen && <Comments postId={post.id} />}
       </div>

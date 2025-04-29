@@ -127,10 +127,7 @@ const Profile = () => {
               <div className="center">
                 <span>{userData.name}</span>
                 <div className="info">
-                  <div className="item">
-                    <PlaceIcon />
-                    <span>{userData.city || "No location set"}</span>
-                  </div>
+                 
                 </div>
                 {relationshipLoading ? (
                   "loading"
