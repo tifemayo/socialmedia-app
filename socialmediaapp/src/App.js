@@ -1,5 +1,6 @@
 import React from 'react';
-import { NotificationProvider } from './context/notificationContext';
+import { TimerProvider } from './context/timerContext';
+import Notification from './components/timerNotification/Notification';
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import PlatformSelection from "./pages/platforms/PlatformSelection";
@@ -27,26 +28,26 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 
 function App() {
-
   const {currentUser} = useContext(AuthContext);
-  
   const { darkMode } = useContext(DarkModeContext);
-
   const queryClient = new QueryClient();
 
   const Layout = () => {
     return (
       <QueryClientProvider client={queryClient}>
-        <div className={`theme-${darkMode ? "dark" : "light"}`} style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-          <NavBar />
-          <div style={{ display: "flex", flex: 1, minHeight: "calc(100vh - 70px)" }}>
-            <LeftBar />
-            <div style={{ flex: 6, minHeight: "100%" }}>
-               <Outlet />
+        <TimerProvider>
+          <div className={`theme-${darkMode ? "dark" : "light"}`} style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+            <NavBar />
+            <div style={{ display: "flex", flex: 1, minHeight: "calc(100vh - 70px)" }}>
+              <LeftBar />
+              <div style={{ flex: 6, minHeight: "100%" }}>
+                <Outlet />
+              </div>
+              <RightBar />
             </div>
-            <RightBar />
+            <Notification />
           </div>
-        </div>
+        </TimerProvider>
       </QueryClientProvider>
     );
   };
@@ -105,9 +106,7 @@ function App() {
   
   
   return (
-    <NotificationProvider>
-      <RouterProvider router={router} />
-    </NotificationProvider>
+    <RouterProvider router={router} />
   );
 }
 

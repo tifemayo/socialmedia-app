@@ -10,6 +10,7 @@ import Puzzle from "../../assets/puzzle.png";
 import Timer from '../timer/Timer';
 import Notification from '../timerNotification/Notification';
 import defaultAvatar from "../../images/default.jpeg";
+import { useTimer } from '../../context/timerContext';
 
 const platforms = [
   { id: "instagram", name: "Instagram", image: Instagram },
@@ -138,6 +139,8 @@ const Edit = ({ setOpenEdit, user}) => {
     }
   };
 
+  const { updateTimerSettings } = useTimer();
+  
   const handleSubmit = async (e) => {
     e.preventDefault(); 
     setLoading(true);
@@ -156,6 +159,9 @@ const Edit = ({ setOpenEdit, user}) => {
       // Save timer settings to localStorage
       localStorage.setItem('dailyLimit', dailyLimit);
       localStorage.setItem('dailyGoal', dailyGoal);
+      
+      // Update timer settings globally
+      updateTimerSettings(dailyLimit, dailyGoal);
       
       setOpenEdit(false);
       setCover(null);
@@ -247,7 +253,10 @@ const Edit = ({ setOpenEdit, user}) => {
             onChange={(e) => setDailyGoal(e.target.value)}
             placeholder="What do you want to achieve today?"
           />
-          <Timer timeLimit={dailyLimit} onLimitReached={handleLimitReached} />
+          <Timer 
+              timeLimit={dailyLimit} 
+              dailyGoal={dailyGoal}
+          />
           {showNotification && (
             <Notification
               message={`You have elapsed your time. Go work on your goal: "${dailyGoal}" and visit later!`} 

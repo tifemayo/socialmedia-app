@@ -1,23 +1,21 @@
-import React, { useEffect } from 'react';
-import './Notification.scss'; // Add styles for the modal
+import React from 'react';
+import './Notification.scss';
+import { useTimer } from '../../context/timerContext';
 
-const Notification = ({ message, onClose, duration }) => {
-    // Automatically close the notification after the specified duration
-    useEffect(() => {
-        if (duration) {
-            const timer = setTimeout(() => {
-                onClose();
-            }, duration);
-            return () => clearTimeout(timer); // Cleanup on unmount
-        }
-    }, [duration, onClose]);
+const Notification = () => {
+    const { showNotification, setShowNotification, timeLimit, dailyGoal } = useTimer();
+
+    if (!showNotification) return null;
 
     return (
         <div className="modal">
             <div className="modal-content">
-                <h2>Time Limit Reached</h2>
-                <p>{message}</p>
-                <button onClick={onClose}>Close</button>
+                <h2>Time Limit Reached!</h2>
+                <p>You have reached your daily limit of {timeLimit} seconds.</p>
+                <p>Remember your goal: {dailyGoal}</p>
+                <button onClick={() => setShowNotification(false)}>
+                    Close
+                </button>
             </div>
         </div>
     );
