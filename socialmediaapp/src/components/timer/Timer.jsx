@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './Timer.scss'; 
 
 const Timer = ({ timeLimit, onLimitReached }) => {
     const [activeTime, setActiveTime] = useState(0);
@@ -24,7 +25,7 @@ const Timer = ({ timeLimit, onLimitReached }) => {
 
     return (
         <div>
-            <h2>Active Time Spent: {activeTime} seconds</h2>
+            <h2 className="active">Active Time Spent: {activeTime} seconds</h2>
         </div>
     );
 };

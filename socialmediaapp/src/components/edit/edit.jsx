@@ -8,7 +8,7 @@ import Instagram from "../../assets/instagram.png";
 import TikTok from "../../assets/tik-tok.png";
 import Puzzle from "../../assets/puzzle.png";
 import Timer from '../timer/Timer';
-// import NotificationModal from '../notification/NotificationModal';
+import Notification from '../timerNotification/Notification';
 
 const platforms = [
   { id: "instagram", name: "Instagram", image: Instagram },
@@ -36,7 +36,7 @@ const Edit = ({ setOpenEdit, user}) => {
   // Timer settings
   const [dailyLimit, setDailyLimit] = useState(0);
   const [dailyGoal, setDailyGoal] = useState("");
-  // const [showNotification, setShowNotification] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
 
   // Fetch user's connected platforms
   const { data: userPlatforms, isLoading: userPlatformsLoading } = useQuery({
