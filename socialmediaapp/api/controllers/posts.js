@@ -102,7 +102,7 @@ export const deletePost = (req, res) => {
   });
 };
 
-// Update the searchPosts function to remove intelligence features
+// Serach posts functionality , to getposts post names and user account , using terms
 export const searchPosts = (req, res) => {
   const searchQuery = req.query.q;
   
