@@ -31,7 +31,6 @@ The application follows a clean 4-layer architecture:
 3. **Service Layer** – Abstracts platform-specific logic into services (`InstagramService`, `TikTokService`) via a shared interface.
 4. **Data Layer** – Currently uses mocked data; structured to support real API data in the future.
 
-![System Architecture](./assets/unifeed_system_architecture_diagram.png)
 
 ## Tech Stack
 
