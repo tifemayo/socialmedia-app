@@ -133,7 +133,8 @@
           }
 
           span {
-            font-size: 30px;
+            font-size:   20px;
+           
             font-weight: 500;
             
             @include mobile{
@@ -148,6 +149,7 @@
             justify-content: space-around;
             flex-direction: column;
             gap: 15px;
+           
             
             @include mobile{
               gap: 10px;

@@ -30,6 +30,7 @@ const Post = ({ post }) => {
 
   const queryClient = useQueryClient();
 
+  //Hook to handle Likes , through API calls to the server
   const mutation = useMutation({
     mutationFn: (liked) => {
       if (liked){

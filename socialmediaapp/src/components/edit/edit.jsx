@@ -12,13 +12,16 @@ import Notification from '../timerNotification/Notification';
 import defaultAvatar from "../../images/default.jpeg";
 import { useTimer } from '../../context/timerContext';
 
+// Dictionary of platforms and keys 
 const platforms = [
   { id: "instagram", name: "Instagram", image: Instagram },
   { id: "tiktok", name: "TikTok", image: TikTok },
   { id: "unifeed", name: "Unifeed (Default)", image: Puzzle }
 ];
 
+//Function to Edit a user profile 
 const Edit = ({ setOpenEdit, user}) => {
+  //Initialising variables to be used in later parts
   const queryClient = useQueryClient();
   const { currentUser, updateUser } = useContext(AuthContext);
   const [cover, setCover] = useState(null);
@@ -27,6 +30,7 @@ const Edit = ({ setOpenEdit, user}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
+  //Variables handles the state of the edit form , if a value exists in backend , otherwise blank
   const [texts, setTexts] = useState({
     email: user?.email || "",
     password: user?.password || "",
@@ -35,7 +39,7 @@ const Edit = ({ setOpenEdit, user}) => {
     city: user?.city || "",
   });
 
-  // Timer settings
+  // Variables used to set time limit in edit pop up 
   const [dailyLimit, setDailyLimit] = useState(0);
   const [dailyGoal, setDailyGoal] = useState("");
   const [showNotification, setShowNotification] = useState(false);
@@ -46,7 +50,7 @@ const Edit = ({ setOpenEdit, user}) => {
     queryFn: async () => {
       try {
         const response = await makeRequest.get(`/platforms?userId=${user.id}`);
-        console.log("User platforms response:", response.data); // Debug log
+        console.log("User platforms response:", response.data); // Debug  log for testing 
         return response.data;
       } catch (error) {
         console.error("Error fetching user platforms:", error);
@@ -141,13 +145,14 @@ const Edit = ({ setOpenEdit, user}) => {
 
   const { updateTimerSettings } = useTimer();
   
+  // Function to update the profile
   const handleSubmit = async (e) => {
     e.preventDefault(); 
     setLoading(true);
     setError(null);
 
     try {
-      // Update the profile
+      // Update the profile with values 
       let coverUrl;
       let profileUrl;
       
@@ -233,13 +238,8 @@ const Edit = ({ setOpenEdit, user}) => {
             onChange={handleChange}
             value={texts.username}
           />
-          <label>City</label>
-          <input 
-            type="text" 
-            name="city" 
-            onChange={handleChange}
-            value={texts.city}
-          />
+  
+      
           <label>Daily Time Limit (seconds)</label>
           <input 
             type="number" 

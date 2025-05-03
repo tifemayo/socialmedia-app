@@ -12,22 +12,48 @@ const Register = () => {
     name: "",
   });
   const [err, setErr] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setInputs({ ...inputs, [name]: value });
   };
+
+
+  //validate that the user enters information in the right format
+  const validate = () => {
+    const newErrors = {};
+    if (!inputs.username) newErrors.username = 'Username is required';
+    if (!inputs.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(inputs.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+    if (!inputs.password) {
+      newErrors.password = 'Password is required';
+    } else if (inputs.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    return newErrors;
+  };
+
+
+  //ensures that user has passed validation , and the registration info is then sent to the backend
   const handleClick = async (e) => {
     e.preventDefault();
-
-    try {
-      const res = await axios.post("http://localhost:8800/api/auth/register", inputs);
-      if (res.data.userId) {
-        localStorage.setItem("userId", res.data.userId);
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      try {
+        const res = await axios.post("http://localhost:8800/api/auth/register", inputs);
+        if (res.data.userId) {
+          localStorage.setItem("userId", res.data.userId);
+        }
+        navigate("/platforms");
+      } catch (err) {
+        setErr(err.response.data);
       }
-      // Change this line from navigate("/login") to:
-      navigate("/platforms");
-    } catch (err) {
-      setErr(err.response.data);
     }
   };
 
@@ -39,8 +65,8 @@ const Register = () => {
         <div className="top">
           <h1>Unifeed</h1>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
-            alias totam numquam  error nam, consequatur.
+            This Unifeed a Platform that unifies different social media platforms into a streamlined interface.
+            
           </p>
           
         </div>
@@ -49,7 +75,9 @@ const Register = () => {
           <form>
             
             <input type="email" placeholder="Email Address" name="email" onChange={handleChange} />
+            {errors.email && <span>{errors.email}</span>}
             <input type="password" placeholder="Password" name="password" onChange={handleChange}/>
+            {errors.password && <span>{errors.password}</span>}
             <input type="text" placeholder="Full Name" name="name" onChange={handleChange}/>
             <input type="text" placeholder="Username" name="username" onChange={handleChange}/>
             {/* <span>Date of Birth</span> 

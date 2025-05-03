@@ -125,9 +125,9 @@ const Profile = () => {
                 </a>
               </div>
               <div className="center">
-                <span>{userData.name}</span>
-                <div className="info">
-                 
+              
+                <div className="username">
+                 <span>{userData.name}</span>
                 </div>
                 {relationshipLoading ? (
                   "loading"

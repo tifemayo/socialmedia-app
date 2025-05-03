@@ -91,10 +91,7 @@ const LeftBar = () => {
                         />
                         <span>{displayUser.username}</span>
                     </div>
-                    <div className="item">
-                        <PeopleIcon/>
-                        <span>Following</span>
-                    </div>
+                  
                     <div className="item">
                         <GroupsIcon />
                         <span>Community</span>
